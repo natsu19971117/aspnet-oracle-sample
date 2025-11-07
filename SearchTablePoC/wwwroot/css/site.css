@@ -79,6 +79,10 @@ body {
     gap: 1rem;
 }
 
+.form-field {
+    position: relative;
+}
+
 .form-field label {
     display: block;
     margin-bottom: 0.35rem;
@@ -225,6 +229,46 @@ body {
     border-radius: 4px;
     border: 1px solid #94a3b8;
     font-size: 0.85rem;
+}
+
+.filter-row th {
+    position: relative;
+}
+
+.autocomplete-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 0.25rem);
+    display: none;
+    padding: 0.25rem 0;
+    margin: 0;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    max-height: 16rem;
+    overflow-y: auto;
+    z-index: 25;
+}
+
+.autocomplete-panel.is-visible {
+    display: block;
+}
+
+.autocomplete-option {
+    width: 100%;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+
+.autocomplete-option:hover,
+.autocomplete-option.is-active {
+    background-color: #e0f2fe;
 }
 
 .column-filter:focus {
