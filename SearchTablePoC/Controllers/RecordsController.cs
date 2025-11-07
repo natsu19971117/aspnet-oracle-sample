@@ -79,7 +79,7 @@ public sealed class RecordsController : Controller
     }
 
     [HttpGet]
-    public IActionResult Suggestions([FromQuery] string field, [FromQuery] string? term, [FromQuery] string scope = "column", [FromQuery] int limit = 10, [FromQuery] RecordQuery query)
+    public IActionResult Suggestions([FromQuery] string field, [FromQuery] RecordQuery query, [FromQuery] string? term = null, [FromQuery] string scope = "column", [FromQuery] int limit = 10)
     {
         if (string.IsNullOrWhiteSpace(field))
         {
