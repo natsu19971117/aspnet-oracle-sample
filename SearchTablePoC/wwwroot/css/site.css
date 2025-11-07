@@ -281,6 +281,12 @@ body {
     border: none;
     color: inherit;
     cursor: pointer;
+    gap: 0.4rem;
+}
+
+.sort-button span:first-child {
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .sort-button.is-active {
