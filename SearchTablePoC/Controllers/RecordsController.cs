@@ -79,6 +79,37 @@ public sealed class RecordsController : Controller
     }
 
     [HttpGet]
+    public IActionResult Suggestions([FromQuery] string field, [FromQuery] string? term, [FromQuery] string scope = "column", [FromQuery] int limit = 10, [FromQuery] RecordQuery query)
+    {
+        if (string.IsNullOrWhiteSpace(field))
+        {
+            return Json(new { values = Array.Empty<string>() });
+        }
+
+        query.ApplyColumnFiltersFromQuery(Request.Query);
+        var workingQuery = query.Clone();
+
+        if (string.Equals(scope, "query", StringComparison.OrdinalIgnoreCase))
+        {
+            if (field.Equals(nameof(Record.Category), StringComparison.OrdinalIgnoreCase))
+            {
+                workingQuery.Category = null;
+            }
+            else if (field.Equals(nameof(Record.Status), StringComparison.OrdinalIgnoreCase))
+            {
+                workingQuery.Status = null;
+            }
+            else if (field.Equals(nameof(Record.Id), StringComparison.OrdinalIgnoreCase))
+            {
+                workingQuery.Id = null;
+            }
+        }
+
+        var suggestions = _repository.GetSuggestions(field, workingQuery, term, limit);
+        return Json(new { values = suggestions });
+    }
+
+    [HttpGet]
     public IActionResult Csv([FromQuery] RecordQuery query)
     {
         query.ApplyColumnFiltersFromQuery(Request.Query);

@@ -63,6 +63,33 @@ public sealed class MockRepository
         return builder.ToString();
     }
 
+    public IReadOnlyList<string> GetSuggestions(string propertyName, RecordQuery query, string? term, int limit = 10)
+    {
+        if (string.IsNullOrWhiteSpace(propertyName) || !RecordMetadata.ColumnLookup.TryGetValue(propertyName, out var column))
+        {
+            return Array.Empty<string>();
+        }
+
+        var cappedLimit = limit <= 0 ? 10 : Math.Min(limit, 50);
+        var workingQuery = query.Clone();
+        workingQuery.Normalize();
+        workingQuery.ColumnFilters.Remove(propertyName);
+
+        var filtered = ApplyColumnFilters(ApplySearch(_records.AsEnumerable(), workingQuery), workingQuery);
+        var filterTerm = term?.Trim();
+
+        var suggestions = filtered
+            .Select(record => RecordMetadata.FormatValue(record, column))
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Where(value => string.IsNullOrEmpty(filterTerm) || value.IndexOf(filterTerm, StringComparison.OrdinalIgnoreCase) >= 0)
+            .OrderBy(value => value, StringComparer.OrdinalIgnoreCase)
+            .Take(cappedLimit)
+            .ToList();
+
+        return suggestions;
+    }
+
     private static string Escape(string value)
     {
         var escaped = value.Replace("\"", "\"\"");
