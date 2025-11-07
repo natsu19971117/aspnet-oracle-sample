@@ -12,6 +12,26 @@
     var activeSort = string.IsNullOrWhiteSpace(Model.Query.SortBy) ? "Id" : Model.Query.SortBy!;
 }
 
+<section class="search-section column-section">
+    <div class="search-header">
+        <h2>表示項目</h2>
+    </div>
+    <div class="column-panel">
+        <ul class="column-list" id="column-settings-list">
+            @foreach (var column in Model.Columns)
+            {
+                <li class="column-item" data-column-item="@column.PropertyName" draggable="true">
+                    <label>
+                        <input type="checkbox" data-column-toggle="@column.PropertyName" checked />
+                        <span class="column-label-text">@column.DisplayName</span>
+                        <span class="drag-handle" aria-hidden="true">⠿</span>
+                    </label>
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+
 <section class="search-section">
     <div class="search-header">
         <h2>Search Filters</h2>
