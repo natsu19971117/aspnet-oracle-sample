@@ -260,13 +260,85 @@
         }
 
         const scope = input.dataset.autocompleteScope === 'query' ? 'query' : 'column';
-        const datalist = document.createElement('datalist');
-        const listId = `autocomplete-${field}-${Math.random().toString(36).slice(2)}`;
-        datalist.id = listId;
-        input.setAttribute('list', listId);
-        input.insertAdjacentElement('afterend', datalist);
+        const panel = document.createElement('div');
+        panel.className = 'autocomplete-panel';
+        panel.setAttribute('role', 'listbox');
+        panel.hidden = true;
+        input.insertAdjacentElement('afterend', panel);
 
         let activeRequest = 0;
+        let suggestions = [];
+        let highlightedIndex = -1;
+
+        function hidePanel() {
+            panel.hidden = true;
+            panel.classList.remove('is-visible');
+            highlightedIndex = -1;
+        }
+
+        function showPanel() {
+            if (!suggestions.length) {
+                hidePanel();
+                return;
+            }
+
+            panel.hidden = false;
+            panel.classList.add('is-visible');
+        }
+
+        function highlightOption(index) {
+            const options = Array.from(panel.querySelectorAll('.autocomplete-option'));
+            options.forEach(option => option.classList.remove('is-active'));
+            if (index < 0 || index >= options.length) {
+                highlightedIndex = -1;
+                return;
+            }
+
+            highlightedIndex = index;
+            const option = options[index];
+            option.classList.add('is-active');
+            option.scrollIntoView({ block: 'nearest' });
+        }
+
+        function selectOption(index) {
+            if (index < 0 || index >= suggestions.length) {
+                return;
+            }
+
+            const value = suggestions[index];
+            input.value = value;
+            hidePanel();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus({ preventScroll: true });
+        }
+
+        function renderSuggestions(values) {
+            suggestions = values;
+            panel.innerHTML = '';
+
+            if (!values.length) {
+                hidePanel();
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            values.forEach((value, index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'autocomplete-option';
+                button.setAttribute('role', 'option');
+                button.textContent = value;
+                button.addEventListener('mousedown', (event) => event.preventDefault());
+                button.addEventListener('click', () => {
+                    selectOption(index);
+                });
+                fragment.appendChild(button);
+            });
+
+            panel.appendChild(fragment);
+            highlightedIndex = -1;
+            showPanel();
+        }
 
         async function performFetch(term) {
             const requestId = ++activeRequest;
@@ -285,12 +357,7 @@
                 }
 
                 const values = Array.isArray(payload.values) ? payload.values : [];
-                datalist.innerHTML = '';
-                values.forEach(value => {
-                    const option = document.createElement('option');
-                    option.value = value;
-                    datalist.appendChild(option);
-                });
+                renderSuggestions(values);
             } catch (error) {
                 console.error(error);
             }
@@ -299,11 +366,48 @@
         const debouncedFetch = debounce(performFetch, 200);
 
         input.addEventListener('focus', () => {
+            if (suggestions.length) {
+                showPanel();
+            }
             performFetch(input.value);
         });
 
         input.addEventListener('input', () => {
             debouncedFetch(input.value);
+        });
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                hidePanel();
+                return;
+            }
+
+            if (suggestions.length === 0) {
+                return;
+            }
+
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                showPanel();
+                const nextIndex = highlightedIndex + 1 >= suggestions.length ? 0 : highlightedIndex + 1;
+                highlightOption(nextIndex);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                showPanel();
+                const nextIndex = highlightedIndex - 1 < 0 ? suggestions.length - 1 : highlightedIndex - 1;
+                highlightOption(nextIndex);
+            } else if (event.key === 'Enter' && !panel.hidden && highlightedIndex >= 0) {
+                event.preventDefault();
+                selectOption(highlightedIndex);
+            }
+        });
+
+        input.addEventListener('blur', () => {
+            window.setTimeout(() => {
+                if (!input.matches(':focus')) {
+                    hidePanel();
+                }
+            }, 150);
         });
     }
 
