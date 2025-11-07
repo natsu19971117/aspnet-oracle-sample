@@ -166,8 +166,8 @@ public sealed class MockRepository
 
             return (left, right) switch
             {
-                (IComparable comparableLeft, IComparable comparableRight) => comparableLeft.CompareTo(comparableRight),
                 (DateOnly dateLeft, DateOnly dateRight) => dateLeft.CompareTo(dateRight),
+                (IComparable comparableLeft, IComparable comparableRight) => comparableLeft.CompareTo(comparableRight),
                 _ => string.Compare(left.ToString(), right.ToString(), StringComparison.OrdinalIgnoreCase)
             };
         });
