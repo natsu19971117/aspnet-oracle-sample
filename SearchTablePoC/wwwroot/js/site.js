@@ -489,15 +489,24 @@
         }
     }
 
-    const debouncedFilterRequest = debounce(() => {
+    function requestFilterUpdate() {
         state.page = 1;
         const params = gatherSearchParameters(true);
         params.set('Page', '1');
         fetchList(params);
-    }, 300);
+    }
 
     columnFilterInputs.forEach(input => {
-        input.addEventListener('input', debouncedFilterRequest);
+        input.addEventListener('change', () => {
+            requestFilterUpdate();
+        });
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                requestFilterUpdate();
+            }
+        });
     });
 
     function buildSuggestionParams(field, scope, term) {
@@ -570,7 +579,11 @@
             const value = suggestions[index];
             input.value = value;
             hidePanel();
-            input.dispatchEvent(new Event('input', { bubbles: true }));
+            if (scope === 'column') {
+                requestFilterUpdate();
+            } else {
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
             input.focus({ preventScroll: true });
         }
 
