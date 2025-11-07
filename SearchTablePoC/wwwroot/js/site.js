@@ -17,6 +17,7 @@
     const columnFilterInputs = Array.from(document.querySelectorAll('.column-filter'));
     const sortButtons = Array.from(document.querySelectorAll('.sort-button'));
     const columns = window.recordColumns || JSON.parse(table.dataset.columns || '[]');
+    const autocompleteInputs = Array.from(document.querySelectorAll('[data-autocomplete]'));
 
     const state = {
         page: parseInt(stateElement.dataset.currentPage || '1', 10),
@@ -236,6 +237,77 @@
     columnFilterInputs.forEach(input => {
         input.addEventListener('input', debouncedFilterRequest);
     });
+
+    function buildSuggestionParams(field, scope, term) {
+        const params = gatherSearchParameters(false);
+        if (scope === 'column') {
+            params.delete(`col_${field}`);
+        } else {
+            params.delete(field);
+        }
+
+        params.set('field', field);
+        params.set('term', term ?? '');
+        params.set('limit', '10');
+        params.set('scope', scope);
+        return params;
+    }
+
+    function setupAutocomplete(input) {
+        const field = input.dataset.autocomplete;
+        if (!field) {
+            return;
+        }
+
+        const scope = input.dataset.autocompleteScope === 'query' ? 'query' : 'column';
+        const datalist = document.createElement('datalist');
+        const listId = `autocomplete-${field}-${Math.random().toString(36).slice(2)}`;
+        datalist.id = listId;
+        input.setAttribute('list', listId);
+        input.insertAdjacentElement('afterend', datalist);
+
+        let activeRequest = 0;
+
+        async function performFetch(term) {
+            const requestId = ++activeRequest;
+            const params = buildSuggestionParams(field, scope, term?.trim() ?? '');
+            const url = `/Records/Suggestions?${params.toString()}`;
+
+            try {
+                const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!response.ok) {
+                    return;
+                }
+
+                const payload = await response.json();
+                if (requestId !== activeRequest) {
+                    return;
+                }
+
+                const values = Array.isArray(payload.values) ? payload.values : [];
+                datalist.innerHTML = '';
+                values.forEach(value => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    datalist.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        const debouncedFetch = debounce(performFetch, 200);
+
+        input.addEventListener('focus', () => {
+            performFetch(input.value);
+        });
+
+        input.addEventListener('input', () => {
+            debouncedFetch(input.value);
+        });
+    }
+
+    autocompleteInputs.forEach(setupAutocomplete);
 
     sortButtons.forEach(button => {
         button.addEventListener('click', () => {

@@ -26,20 +26,25 @@
                 </div>
                 <div class="form-field">
                     <label for="Category">カテゴリ</label>
-                    <select id="Category" name="Category">
-                        <option value="">指定なし</option>
-                        <option value="A" selected="@(Model.Query.Category == "A" ? "selected" : null)">A</option>
-                        <option value="B" selected="@(Model.Query.Category == "B" ? "selected" : null)">B</option>
-                        <option value="C" selected="@(Model.Query.Category == "C" ? "selected" : null)">C</option>
-                    </select>
+                    <input type="text"
+                           id="Category"
+                           name="Category"
+                           value="@Model.Query.Category"
+                           placeholder="カテゴリを入力"
+                           autocomplete="off"
+                           data-autocomplete="Category"
+                           data-autocomplete-scope="query" />
                 </div>
                 <div class="form-field">
                     <label for="Status">ステータス</label>
-                    <select id="Status" name="Status">
-                        <option value="">指定なし</option>
-                        <option value="Active" selected="@(Model.Query.Status == "Active" ? "selected" : null)">Active</option>
-                        <option value="Inactive" selected="@(Model.Query.Status == "Inactive" ? "selected" : null)">Inactive</option>
-                    </select>
+                    <input type="text"
+                           id="Status"
+                           name="Status"
+                           value="@Model.Query.Status"
+                           placeholder="ステータスを入力"
+                           autocomplete="off"
+                           data-autocomplete="Status"
+                           data-autocomplete-scope="query" />
                 </div>
                 <div class="form-field">
                     <label for="UpdatedFrom">更新日 From</label>
@@ -108,7 +113,14 @@
                     @foreach (var column in Model.Columns)
                     {
                         <th>
-                            <input type="text" class="column-filter" data-column-filter="@column.PropertyName" name="col_@column.PropertyName" value="@Model.Query.GetColumnFilterValue(column.PropertyName)" />
+                            <input type="text"
+                                   class="column-filter"
+                                   data-column-filter="@column.PropertyName"
+                                   data-autocomplete="@column.PropertyName"
+                                   data-autocomplete-scope="column"
+                                   name="col_@column.PropertyName"
+                                   value="@Model.Query.GetColumnFilterValue(column.PropertyName)"
+                                   autocomplete="off" />
                         </th>
                     }
                 </tr>
