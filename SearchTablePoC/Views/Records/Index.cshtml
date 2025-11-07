@@ -28,17 +28,17 @@
                     <label for="Category">カテゴリ</label>
                     <select id="Category" name="Category">
                         <option value="">指定なし</option>
-                        <option value="A" @(Model.Query.Category == "A" ? "selected" : null)>A</option>
-                        <option value="B" @(Model.Query.Category == "B" ? "selected" : null)>B</option>
-                        <option value="C" @(Model.Query.Category == "C" ? "selected" : null)>C</option>
+                        <option value="A" selected="@(Model.Query.Category == "A" ? "selected" : null)">A</option>
+                        <option value="B" selected="@(Model.Query.Category == "B" ? "selected" : null)">B</option>
+                        <option value="C" selected="@(Model.Query.Category == "C" ? "selected" : null)">C</option>
                     </select>
                 </div>
                 <div class="form-field">
                     <label for="Status">ステータス</label>
                     <select id="Status" name="Status">
                         <option value="">指定なし</option>
-                        <option value="Active" @(Model.Query.Status == "Active" ? "selected" : null)>Active</option>
-                        <option value="Inactive" @(Model.Query.Status == "Inactive" ? "selected" : null)>Inactive</option>
+                        <option value="Active" selected="@(Model.Query.Status == "Active" ? "selected" : null)">Active</option>
+                        <option value="Inactive" selected="@(Model.Query.Status == "Inactive" ? "selected" : null)">Inactive</option>
                     </select>
                 </div>
                 <div class="form-field">
@@ -82,9 +82,9 @@
         <div class="controls">
             <label for="page-size">1ページ件数</label>
             <select id="page-size" name="PageSize">
-                <option value="20" @(Model.Query.PageSize == 20 ? "selected" : null)>20</option>
-                <option value="50" @(Model.Query.PageSize == 50 ? "selected" : null)>50</option>
-                <option value="100" @(Model.Query.PageSize == 100 ? "selected" : null)>100</option>
+                <option value="20" selected="@(Model.Query.PageSize == 20 ? "selected" : null)">20</option>
+                <option value="50" selected="@(Model.Query.PageSize == 50 ? "selected" : null)">50</option>
+                <option value="100" selected="@(Model.Query.PageSize == 100 ? "selected" : null)">100</option>
             </select>
             <button type="button" id="download-csv" class="secondary">CSV</button>
         </div>
@@ -143,7 +143,7 @@
                 {
                     var isCurrent = page == Model.Query.Page;
                     <li>
-                        <button type="button" class="page-button @(isCurrent ? "is-current" : string.Empty)" data-page="@page">@page</button>
+                        <button type="button" class="page-button @(isCurrent ? "is-current" : string.Empty)" data-page="@(page)">@(page)</button>
                     </li>
                 }
             }
