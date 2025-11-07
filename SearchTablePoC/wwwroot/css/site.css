@@ -46,6 +46,11 @@ body {
 
 .column-panel {
     margin-top: 0.75rem;
+    display: block;
+}
+
+.column-panel[hidden] {
+    display: none;
 }
 
 .column-list {

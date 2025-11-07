@@ -15,8 +15,9 @@
 <section class="search-section column-section">
     <div class="search-header">
         <h2>表示項目</h2>
+        <button id="column-toggle" class="search-toggle" type="button" aria-expanded="true" aria-controls="column-panel">項目表示切替</button>
     </div>
-    <div class="column-panel">
+    <div id="column-panel" class="column-panel">
         <ul class="column-list" id="column-settings-list">
             @foreach (var column in Model.Columns)
             {

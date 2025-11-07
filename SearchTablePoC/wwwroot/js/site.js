@@ -7,6 +7,8 @@
 
     const searchToggle = document.getElementById('search-toggle');
     const searchPanel = document.getElementById('search-panel');
+    const columnToggle = document.getElementById('column-toggle');
+    const columnPanel = document.getElementById('column-panel');
     const searchForm = document.getElementById('search-form');
     const clearButton = document.getElementById('clear-search');
     const pageSizeSelect = document.getElementById('page-size');
@@ -86,23 +88,24 @@
         }
     }
 
-    function toggleSearchPanel() {
-        if (!searchToggle || !searchPanel) {
+    function attachSectionToggle(button, panel) {
+        if (!button || !panel) {
             return;
         }
 
-        const expanded = searchToggle.getAttribute('aria-expanded') === 'true';
-        searchToggle.setAttribute('aria-expanded', (!expanded).toString());
-        if (expanded) {
-            searchPanel.setAttribute('hidden', '');
-        } else {
-            searchPanel.removeAttribute('hidden');
-        }
+        button.addEventListener('click', () => {
+            const expanded = button.getAttribute('aria-expanded') === 'true';
+            button.setAttribute('aria-expanded', (!expanded).toString());
+            if (expanded) {
+                panel.setAttribute('hidden', '');
+            } else {
+                panel.removeAttribute('hidden');
+            }
+        });
     }
 
-    if (searchToggle && searchPanel) {
-        searchToggle.addEventListener('click', toggleSearchPanel);
-    }
+    attachSectionToggle(searchToggle, searchPanel);
+    attachSectionToggle(columnToggle, columnPanel);
 
     function debounce(fn, wait) {
         let timeoutId;
