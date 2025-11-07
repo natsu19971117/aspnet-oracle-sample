@@ -1,0 +1,305 @@
+:root {
+    color-scheme: light;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+body {
+    margin: 0;
+    background-color: #f5f7fb;
+    color: #1f2933;
+}
+
+.layout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.top-bar {
+    background-color: #1f2933;
+    color: #fff;
+}
+
+.app-title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.footer {
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.search-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+}
+
+.search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.search-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.search-toggle {
+    border: none;
+    background: #1d4ed8;
+    color: #fff;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.search-toggle[aria-expanded="false"] {
+    background: #6b7280;
+}
+
+.search-panel {
+    display: block;
+}
+
+.search-panel[hidden] {
+    display: none;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+
+.form-field input,
+.form-field select {
+    width: 100%;
+    padding: 0.45rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background-color: #fff;
+    font-size: 0.95rem;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+.validation-message.is-hidden {
+    display: none;
+}
+
+.form-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.primary,
+.secondary,
+.page-button,
+.sort-button {
+    font-family: inherit;
+}
+
+.primary {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    cursor: pointer;
+}
+
+.secondary {
+    background-color: #e2e8f0;
+    color: #1f2933;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.primary:hover,
+.secondary:hover,
+.search-toggle:hover {
+    filter: brightness(0.95);
+}
+
+.validation-message {
+    margin-top: 0.75rem;
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.results-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    padding: 1rem 1.25rem;
+}
+
+.table-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.table-controls .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+#records-table {
+    width: max(1200px, 100%);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#records-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #0f172a;
+    color: #fff;
+    font-weight: 600;
+    padding: 0;
+}
+
+#records-table thead tr.filter-row th {
+    top: 2.6rem;
+    background-color: #1f2937;
+    padding: 0.2rem;
+}
+
+.sort-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.sort-button.is-active {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.sort-indicator {
+    font-size: 0.8rem;
+    margin-left: 0.4rem;
+}
+
+.column-filter {
+    width: 100%;
+    padding: 0.35rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid #94a3b8;
+    font-size: 0.85rem;
+}
+
+.column-filter:focus {
+    outline: 2px solid #38bdf8;
+    outline-offset: 1px;
+}
+
+#records-table tbody td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+#records-table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+#records-table tbody tr:hover {
+    background-color: #e0f2fe;
+}
+
+#records-table tbody tr:focus-within {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+}
+
+#records-table tbody tr.empty td {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.pagination {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination ul {
+    list-style: none;
+    display: flex;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0;
+}
+
+.page-button {
+    border: none;
+    border-radius: 4px;
+    background-color: #e2e8f0;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+}
+
+.page-button.is-current {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+.summary {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .layout-container {
+        padding: 1rem;
+    }
+
+    .table-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .table-controls .controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

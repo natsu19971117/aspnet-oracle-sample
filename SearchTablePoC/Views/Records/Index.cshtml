@@ -1,0 +1,162 @@
+@using System
+@model RecordIndexViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Records";
+    var columnsJson = JsonSerializer.Serialize(Model.Columns.Select(c => new
+    {
+        c.PropertyName,
+        c.DisplayName,
+        dataType = c.DataType.ToString().ToLowerInvariant()
+    }));
+    var activeSort = string.IsNullOrWhiteSpace(Model.Query.SortBy) ? "Id" : Model.Query.SortBy!;
+}
+
+<section class="search-section">
+    <div class="search-header">
+        <h2>Search Filters</h2>
+        <button id="search-toggle" class="search-toggle" type="button" aria-expanded="true" aria-controls="search-panel">条件表示切替</button>
+    </div>
+    <div id="search-panel" class="search-panel">
+        <form id="search-form" method="get" action="@Url.Action("Index")" novalidate>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="Keyword">キーワード</label>
+                    <input type="text" id="Keyword" name="Keyword" value="@Model.Query.Keyword" />
+                </div>
+                <div class="form-field">
+                    <label for="Category">カテゴリ</label>
+                    <select id="Category" name="Category">
+                        <option value="">指定なし</option>
+                        <option value="A" selected="@(Model.Query.Category == "A" ? "selected" : null)">A</option>
+                        <option value="B" selected="@(Model.Query.Category == "B" ? "selected" : null)">B</option>
+                        <option value="C" selected="@(Model.Query.Category == "C" ? "selected" : null)">C</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="Status">ステータス</label>
+                    <select id="Status" name="Status">
+                        <option value="">指定なし</option>
+                        <option value="Active" selected="@(Model.Query.Status == "Active" ? "selected" : null)">Active</option>
+                        <option value="Inactive" selected="@(Model.Query.Status == "Inactive" ? "selected" : null)">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="UpdatedFrom">更新日 From</label>
+                    <input type="date" id="UpdatedFrom" name="UpdatedFrom" value="@(Model.Query.UpdatedFrom?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="form-field">
+                    <label for="UpdatedTo">更新日 To</label>
+                    <input type="date" id="UpdatedTo" name="UpdatedTo" value="@(Model.Query.UpdatedTo?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="form-field">
+                    <label for="Id">ID</label>
+                    <input type="number" id="Id" name="Id" value="@(Model.Query.Id?.ToString() ?? string.Empty)" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="primary">検索</button>
+                <button type="button" id="clear-search" class="secondary">クリア</button>
+            </div>
+        </form>
+        <p class="validation-message@(string.IsNullOrEmpty(Model.ErrorMessage) ? " is-hidden" : string.Empty)" role="alert" data-validation-message>@(Model.ErrorMessage ?? string.Empty)</p>
+    </section>
+
+<section class="results-section">
+    <div class="table-controls" id="records-state"
+         data-current-page="@Model.Query.Page"
+         data-page-size="@Model.Query.PageSize"
+         data-sort-by="@activeSort"
+         data-sort-dir="@Model.Query.SortDir"
+         data-total-count="@Model.TotalCount">
+        <div class="summary" data-summary>
+            @if (Model.TotalCount == 0)
+            {
+                <span>No records found</span>
+            }
+            else
+            {
+                <span>Showing @Model.StartIndex - @Model.EndIndex of @Model.TotalCount records</span>
+            }
+        </div>
+        <div class="controls">
+            <label for="page-size">1ページ件数</label>
+            <select id="page-size" name="PageSize">
+                <option value="20" selected="@(Model.Query.PageSize == 20 ? "selected" : null)">20</option>
+                <option value="50" selected="@(Model.Query.PageSize == 50 ? "selected" : null)">50</option>
+                <option value="100" selected="@(Model.Query.PageSize == 100 ? "selected" : null)">100</option>
+            </select>
+            <button type="button" id="download-csv" class="secondary">CSV</button>
+        </div>
+    </div>
+    <div class="table-wrapper">
+        <table id="records-table" data-columns='@Html.Raw(columnsJson)'>
+            <thead>
+                <tr>
+                    @foreach (var column in Model.Columns)
+                    {
+                        var isActive = string.Equals(activeSort, column.PropertyName, StringComparison.OrdinalIgnoreCase);
+                        <th scope="col">
+                            <button type="button" class="sort-button @(isActive ? "is-active" : string.Empty)" data-column="@column.PropertyName">
+                                <span>@column.DisplayName</span>
+                                <span class="sort-indicator">@(isActive ? (Model.Query.SortDir == "desc" ? "▼" : "▲") : "")</span>
+                            </button>
+                        </th>
+                    }
+                </tr>
+                <tr class="filter-row">
+                    @foreach (var column in Model.Columns)
+                    {
+                        <th>
+                            <input type="text" class="column-filter" data-column-filter="@column.PropertyName" name="col_@column.PropertyName" value="@Model.Query.GetColumnFilterValue(column.PropertyName)" />
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Records.Any())
+                {
+                    <tr class="empty">
+                        <td colspan="@Model.Columns.Count">該当するデータがありません。</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var record in Model.Records)
+                    {
+                        <tr>
+                            @foreach (var column in Model.Columns)
+                            {
+                                <td data-column="@column.PropertyName">@RecordMetadata.FormatValue(record, column)</td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <nav class="pagination" aria-label="ページング">
+        <ul id="pagination">
+            @if (Model.PageCount > 1)
+            {
+                for (var page = 1; page <= Model.PageCount; page++)
+                {
+                    var isCurrent = page == Model.Query.Page;
+                    <li>
+                        <button type="button" class="page-button @(isCurrent ? "is-current" : string.Empty)" data-page="@(page)">@(page)</button>
+                    </li>
+                }
+            }
+            else
+            {
+                <li><span class="page-button is-current">1</span></li>
+            }
+        </ul>
+    </nav>
+</section>
+
+@section Scripts {
+<script>
+    window.recordColumns = JSON.parse('@Html.Raw(columnsJson.Replace("\\", "\\\\").Replace("'", "\\'"))');
+</script>
+}
