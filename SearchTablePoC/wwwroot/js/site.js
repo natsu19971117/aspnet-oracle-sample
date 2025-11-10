@@ -346,19 +346,21 @@
 
     function gatherSearchParameters(includePage = true) {
         const params = new URLSearchParams();
-        const keyword = (document.getElementById('Keyword')?.value || '').trim();
+        const idValue = (document.getElementById('Id')?.value || '').trim();
+        const field01 = (document.getElementById('Field01')?.value || '').trim();
         const category = (document.getElementById('Category')?.value || '').trim();
         const status = (document.getElementById('Status')?.value || '').trim();
+        const name = (document.getElementById('Name')?.value || '').trim();
         const updatedFrom = (document.getElementById('UpdatedFrom')?.value || '').trim();
         const updatedTo = (document.getElementById('UpdatedTo')?.value || '').trim();
-        const idValue = (document.getElementById('Id')?.value || '').trim();
 
-        if (keyword) params.set('Keyword', keyword);
+        if (idValue) params.set('Id', idValue);
+        if (field01) params.set('Field01', field01);
         if (category) params.set('Category', category);
         if (status) params.set('Status', status);
+        if (name) params.set('Name', name);
         if (updatedFrom) params.set('UpdatedFrom', updatedFrom);
         if (updatedTo) params.set('UpdatedTo', updatedTo);
-        if (idValue) params.set('Id', idValue);
 
         if (includePage) {
             params.set('Page', String(state.page));
@@ -758,8 +760,13 @@
         clearButton.addEventListener('click', () => {
             searchForm?.reset();
             state.page = 1;
-            const keywordInput = document.getElementById('Keyword');
-            if (keywordInput) keywordInput.value = '';
+            const searchFieldIds = ['Id', 'Field01', 'Category', 'Status', 'Name', 'UpdatedFrom', 'UpdatedTo'];
+            searchFieldIds.forEach(fieldId => {
+                const input = document.getElementById(fieldId);
+                if (input instanceof HTMLInputElement) {
+                    input.value = '';
+                }
+            });
             columnFilterInputs.forEach(input => input.value = '');
             const params = gatherSearchParameters(true);
             params.set('Page', '1');

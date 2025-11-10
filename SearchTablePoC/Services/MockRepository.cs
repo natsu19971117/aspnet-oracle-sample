@@ -106,9 +106,9 @@ public sealed class MockRepository
             results = results.Where(r => r.Id == query.Id.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(query.Keyword))
+        if (!string.IsNullOrWhiteSpace(query.Field01))
         {
-            results = results.Where(r => r.Name.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase));
+            results = results.Where(r => r.Field01.Contains(query.Field01, StringComparison.OrdinalIgnoreCase));
         }
 
         if (!string.IsNullOrWhiteSpace(query.Category))
@@ -119,6 +119,11 @@ public sealed class MockRepository
         if (!string.IsNullOrWhiteSpace(query.Status))
         {
             results = results.Where(r => string.Equals(r.Status, query.Status, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.Name))
+        {
+            results = results.Where(r => r.Name.Contains(query.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         if (query.UpdatedFrom.HasValue)

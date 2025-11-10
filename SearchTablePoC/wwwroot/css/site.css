@@ -158,6 +158,21 @@ body {
     font-weight: 600;
 }
 
+.form-field .date-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-field .date-range input[type="date"] {
+    flex: 1;
+}
+
+.date-range-separator {
+    color: #4b5563;
+    font-weight: 600;
+}
+
 .form-field input,
 .form-field select {
     width: 100%;

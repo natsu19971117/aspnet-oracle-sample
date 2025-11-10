@@ -5,9 +5,10 @@ namespace SearchTablePoC.ViewModels;
 public class RecordQuery
 {
     public int? Id { get; set; }
-    public string? Keyword { get; set; }
+    public string? Field01 { get; set; }
     public string? Category { get; set; }
     public string? Status { get; set; }
+    public string? Name { get; set; }
     public DateOnly? UpdatedFrom { get; set; }
     public DateOnly? UpdatedTo { get; set; }
     public int Page { get; set; } = 1;
@@ -80,9 +81,10 @@ public class RecordQuery
         return new RecordQuery
         {
             Id = Id,
-            Keyword = Keyword,
+            Field01 = Field01,
             Category = Category,
             Status = Status,
+            Name = Name,
             UpdatedFrom = UpdatedFrom,
             UpdatedTo = UpdatedTo,
             Page = Page,
