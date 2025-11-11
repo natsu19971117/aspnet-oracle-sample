@@ -42,6 +42,10 @@
         <form id="search-form" method="get" action="@Url.Action("Index")" novalidate>
             <div class="form-grid">
                 <div class="form-field">
+                    <label for="Keyword">キーワード</label>
+                    <input type="text" id="Keyword" name="Keyword" value="@Model.Query.Keyword" placeholder="キーワードを入力" autocomplete="off" />
+                </div>
+                <div class="form-field">
                     <label for="Id">依頼No</label>
                     <input type="number" id="Id" name="Id" value="@(Model.Query.Id?.ToString() ?? string.Empty)" />
                 </div>
@@ -89,8 +93,9 @@
                 <button type="button" id="clear-search" class="secondary">クリア</button>
             </div>
         </form>
-        <p class="validation-message@(string.IsNullOrEmpty(Model.ErrorMessage) ? " is-hidden" : string.Empty)" role="alert" data-validation-message>@(Model.ErrorMessage ?? string.Empty)</p>
-    </section>
+    </div>
+    <p class="validation-message@(string.IsNullOrEmpty(Model.ErrorMessage) ? " is-hidden" : string.Empty)" role="alert" data-validation-message>@(Model.ErrorMessage ?? string.Empty)</p>
+</section>
 
 <section class="results-section">
     <div class="table-controls" id="records-state"

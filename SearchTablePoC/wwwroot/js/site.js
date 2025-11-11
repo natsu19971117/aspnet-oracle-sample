@@ -346,6 +346,7 @@
 
     function gatherSearchParameters(includePage = true) {
         const params = new URLSearchParams();
+        const keyword = (document.getElementById('Keyword')?.value || '').trim();
         const idValue = (document.getElementById('Id')?.value || '').trim();
         const field01 = (document.getElementById('Field01')?.value || '').trim();
         const category = (document.getElementById('Category')?.value || '').trim();
@@ -354,6 +355,7 @@
         const updatedFrom = (document.getElementById('UpdatedFrom')?.value || '').trim();
         const updatedTo = (document.getElementById('UpdatedTo')?.value || '').trim();
 
+        if (keyword) params.set('Keyword', keyword);
         if (idValue) params.set('Id', idValue);
         if (field01) params.set('Field01', field01);
         if (category) params.set('Category', category);
@@ -760,7 +762,7 @@
         clearButton.addEventListener('click', () => {
             searchForm?.reset();
             state.page = 1;
-            const searchFieldIds = ['Id', 'Field01', 'Category', 'Status', 'Name', 'UpdatedFrom', 'UpdatedTo'];
+            const searchFieldIds = ['Keyword', 'Id', 'Field01', 'Category', 'Status', 'Name', 'UpdatedFrom', 'UpdatedTo'];
             searchFieldIds.forEach(fieldId => {
                 const input = document.getElementById(fieldId);
                 if (input instanceof HTMLInputElement) {

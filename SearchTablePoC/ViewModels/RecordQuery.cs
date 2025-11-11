@@ -5,6 +5,7 @@ namespace SearchTablePoC.ViewModels;
 public class RecordQuery
 {
     public int? Id { get; set; }
+    public string? Keyword { get; set; }
     public string? Field01 { get; set; }
     public string? Category { get; set; }
     public string? Status { get; set; }
@@ -40,6 +41,12 @@ public class RecordQuery
         }
 
         SortDir = SortDir?.Equals("desc", StringComparison.OrdinalIgnoreCase) == true ? "desc" : "asc";
+
+        Keyword = string.IsNullOrWhiteSpace(Keyword) ? null : Keyword.Trim();
+        Field01 = string.IsNullOrWhiteSpace(Field01) ? null : Field01.Trim();
+        Category = string.IsNullOrWhiteSpace(Category) ? null : Category.Trim();
+        Status = string.IsNullOrWhiteSpace(Status) ? null : Status.Trim();
+        Name = string.IsNullOrWhiteSpace(Name) ? null : Name.Trim();
 
         var sanitized = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (key, value) in ColumnFilters)
@@ -81,6 +88,7 @@ public class RecordQuery
         return new RecordQuery
         {
             Id = Id,
+            Keyword = Keyword,
             Field01 = Field01,
             Category = Category,
             Status = Status,

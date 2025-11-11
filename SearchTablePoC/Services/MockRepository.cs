@@ -106,6 +106,16 @@ public sealed class MockRepository
             results = results.Where(r => r.Id == query.Id.Value);
         }
 
+        if (!string.IsNullOrWhiteSpace(query.Keyword))
+        {
+            var keyword = query.Keyword.Trim();
+            results = results.Where(r =>
+                r.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || r.Field01.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || r.Category.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || r.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+        }
+
         if (!string.IsNullOrWhiteSpace(query.Field01))
         {
             results = results.Where(r => r.Field01.Contains(query.Field01, StringComparison.OrdinalIgnoreCase));
