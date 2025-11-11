@@ -108,12 +108,21 @@ public sealed class MockRepository
 
         if (!string.IsNullOrWhiteSpace(query.Keyword))
         {
-            var keyword = query.Keyword.Trim();
-            results = results.Where(r =>
-                r.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase)
-                || r.Field01.Contains(keyword, StringComparison.OrdinalIgnoreCase)
-                || r.Category.Contains(keyword, StringComparison.OrdinalIgnoreCase)
-                || r.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+            var keyword = query.Keyword;
+            results = results.Where(record =>
+            {
+                foreach (var column in RecordMetadata.Columns)
+                {
+                    var value = RecordMetadata.FormatValue(record, column);
+                    if (!string.IsNullOrEmpty(value)
+                        && value.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            });
         }
 
         if (!string.IsNullOrWhiteSpace(query.Field01))

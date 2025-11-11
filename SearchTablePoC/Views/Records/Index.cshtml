@@ -77,7 +77,14 @@
                 </div>
                 <div class="form-field">
                     <label for="Name">担当者</label>
-                    <input type="text" id="Name" name="Name" value="@Model.Query.Name" autocomplete="off" placeholder="担当者を入力" />
+                    <input type="text"
+                           id="Name"
+                           name="Name"
+                           value="@Model.Query.Name"
+                           autocomplete="off"
+                           placeholder="担当者を入力"
+                           data-autocomplete="Name"
+                           data-autocomplete-scope="query" />
                 </div>
                 <div class="form-field">
                     <label for="UpdatedFrom">契約日</label>

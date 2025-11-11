@@ -328,7 +328,6 @@ body {
 .autocomplete-panel {
     position: absolute;
     left: 0;
-    right: 0;
     top: calc(100% + 0.25rem);
     display: none;
     padding: 0.25rem 0;
@@ -337,9 +336,13 @@ body {
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    min-width: clamp(16rem, 100%, 28rem);
+    max-width: min(32rem, calc(100vw - 2rem));
+    width: max-content;
     max-height: 16rem;
     overflow-y: auto;
     z-index: 25;
+    box-sizing: border-box;
 }
 
 .autocomplete-panel.is-visible {
