@@ -103,6 +103,18 @@ public sealed class RecordsController : Controller
             {
                 workingQuery.Id = null;
             }
+            else if (field.Equals(nameof(Record.Field01), StringComparison.OrdinalIgnoreCase))
+            {
+                workingQuery.Field01 = null;
+            }
+            else if (field.Equals(nameof(Record.Name), StringComparison.OrdinalIgnoreCase))
+            {
+                workingQuery.Name = null;
+            }
+            else if (field.Equals(nameof(RecordQuery.Keyword), StringComparison.OrdinalIgnoreCase))
+            {
+                workingQuery.Keyword = null;
+            }
         }
 
         var suggestions = _repository.GetSuggestions(field, workingQuery, term, limit);

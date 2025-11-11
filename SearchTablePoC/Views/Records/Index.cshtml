@@ -43,41 +43,56 @@
             <div class="form-grid">
                 <div class="form-field">
                     <label for="Keyword">キーワード</label>
-                    <input type="text" id="Keyword" name="Keyword" value="@Model.Query.Keyword" />
+                    <input type="text" id="Keyword" name="Keyword" value="@Model.Query.Keyword" placeholder="キーワードを入力" autocomplete="off" />
                 </div>
                 <div class="form-field">
-                    <label for="Category">カテゴリ</label>
+                    <label for="Id">依頼No</label>
+                    <input type="number" id="Id" name="Id" value="@(Model.Query.Id?.ToString() ?? string.Empty)" />
+                </div>
+                <div class="form-field">
+                    <label for="Field01">発注No</label>
+                    <input type="text" id="Field01" name="Field01" value="@Model.Query.Field01" autocomplete="off" placeholder="発注Noを入力" />
+                </div>
+                <div class="form-field">
+                    <label for="Category">部課</label>
                     <input type="text"
                            id="Category"
                            name="Category"
                            value="@Model.Query.Category"
-                           placeholder="カテゴリを入力"
+                           placeholder="部課を入力"
                            autocomplete="off"
                            data-autocomplete="Category"
                            data-autocomplete-scope="query" />
                 </div>
                 <div class="form-field">
-                    <label for="Status">ステータス</label>
+                    <label for="Status">係</label>
                     <input type="text"
                            id="Status"
                            name="Status"
                            value="@Model.Query.Status"
-                           placeholder="ステータスを入力"
+                           placeholder="係を入力"
                            autocomplete="off"
                            data-autocomplete="Status"
                            data-autocomplete-scope="query" />
                 </div>
                 <div class="form-field">
-                    <label for="UpdatedFrom">更新日 From</label>
-                    <input type="date" id="UpdatedFrom" name="UpdatedFrom" value="@(Model.Query.UpdatedFrom?.ToString("yyyy-MM-dd"))" />
+                    <label for="Name">担当者</label>
+                    <input type="text"
+                           id="Name"
+                           name="Name"
+                           value="@Model.Query.Name"
+                           autocomplete="off"
+                           placeholder="担当者を入力"
+                           data-autocomplete="Name"
+                           data-autocomplete-scope="query" />
                 </div>
                 <div class="form-field">
-                    <label for="UpdatedTo">更新日 To</label>
-                    <input type="date" id="UpdatedTo" name="UpdatedTo" value="@(Model.Query.UpdatedTo?.ToString("yyyy-MM-dd"))" />
-                </div>
-                <div class="form-field">
-                    <label for="Id">ID</label>
-                    <input type="number" id="Id" name="Id" value="@(Model.Query.Id?.ToString() ?? string.Empty)" />
+                    <label for="UpdatedFrom">契約日</label>
+                    <div class="date-range">
+                        <input type="date" id="UpdatedFrom" name="UpdatedFrom" value="@(Model.Query.UpdatedFrom?.ToString("yyyy-MM-dd"))" />
+                        <span class="date-range-separator" aria-hidden="true">〜</span>
+                        <input type="date" id="UpdatedTo" name="UpdatedTo" value="@(Model.Query.UpdatedTo?.ToString("yyyy-MM-dd"))" />
+                    </div>
                 </div>
             </div>
             <div class="form-actions">
@@ -85,8 +100,9 @@
                 <button type="button" id="clear-search" class="secondary">クリア</button>
             </div>
         </form>
-        <p class="validation-message@(string.IsNullOrEmpty(Model.ErrorMessage) ? " is-hidden" : string.Empty)" role="alert" data-validation-message>@(Model.ErrorMessage ?? string.Empty)</p>
-    </section>
+    </div>
+    <p class="validation-message@(string.IsNullOrEmpty(Model.ErrorMessage) ? " is-hidden" : string.Empty)" role="alert" data-validation-message>@(Model.ErrorMessage ?? string.Empty)</p>
+</section>
 
 <section class="results-section">
     <div class="table-controls" id="records-state"
