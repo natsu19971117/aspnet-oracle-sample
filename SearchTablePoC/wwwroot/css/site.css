@@ -392,8 +392,8 @@ body {
 }
 
 .quantity-row input {
-    width: 9ch;
-    min-width: 9ch;
+    width: 14ch;
+    min-width: 14ch;
     box-sizing: border-box;
     padding: 0.45rem;
     border-radius: 6px;
