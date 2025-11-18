@@ -37,12 +37,22 @@
                 <input type="text" id="size-label-input" placeholder="例: 2XL" aria-label="追加するサイズ名" />
                 <button type="button" id="add-size-button" class="primary">サイズ列を追加</button>
             </div>
+            <div class="color-add-controls">
+                <h4>カラー行の追加</h4>
+                <p class="hint">生地カラー・カラーNo・カラー名を入力し、「カラー行を追加」を押すと新しい行が作成されます。</p>
+                <div class="color-input-grid">
+                    <input type="text" id="fabric-color-input" placeholder="例: ネイビー" aria-label="生地カラー" />
+                    <input type="text" id="color-number-input" placeholder="例: C101" aria-label="カラーNo" />
+                    <input type="text" id="color-name-input" placeholder="例: ダークネイビー" aria-label="カラー名" />
+                    <button type="button" id="add-color-button" class="secondary">カラー行を追加</button>
+                </div>
+            </div>
         </div>
         <div class="callout">
             <strong>操作のポイント</strong>
             <ul>
                 <li>数量を変更すると、カラー行の合計が自動で再計算されます。</li>
-                <li>納期はサイズごとに個別指定できます。</li>
+                <li>納期はカラーごとにまとめて指定できます。</li>
                 <li>下部の合計欄でサイズ別・全体の集計を確認できます。</li>
             </ul>
         </div>
