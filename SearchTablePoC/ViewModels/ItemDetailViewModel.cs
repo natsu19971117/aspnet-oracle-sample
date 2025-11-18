@@ -21,6 +21,9 @@ public sealed class ColorSizePlan
     [JsonPropertyName("colorName")]
     public string ColorName { get; init; } = string.Empty;
 
+    [JsonPropertyName("dueDate")]
+    public string? DueDate { get; set; }
+
     [JsonPropertyName("sizes")]
     public List<SizeEntry> Sizes { get; init; } = new();
 }
