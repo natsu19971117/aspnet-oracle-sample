@@ -374,6 +374,21 @@ body {
     width: 180px;
 }
 
+.editable-text-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    font: inherit;
+    background-color: #fff;
+}
+
+.editable-text-input:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
 .due-column {
     width: 170px;
     min-width: 170px;
