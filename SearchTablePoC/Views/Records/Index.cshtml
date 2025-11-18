@@ -1,4 +1,5 @@
 @using System
+@using SearchTablePoC.Models
 @model RecordIndexViewModel
 @using System.Text.Json
 @{
@@ -176,7 +177,18 @@
                         <tr>
                             @foreach (var column in Model.Columns)
                             {
-                                <td data-column="@column.PropertyName">@RecordMetadata.FormatValue(record, column)</td>
+                                if (column.PropertyName == nameof(Record.Field02))
+                                {
+                                    <td data-column="@column.PropertyName">
+                                        <a href="@Url.Action("Detail", "Items", new { itemCode = record.Field02 })" target="_blank" rel="noopener">
+                                            @RecordMetadata.FormatValue(record, column)
+                                        </a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td data-column="@column.PropertyName">@RecordMetadata.FormatValue(record, column)</td>
+                                }
                             }
                         </tr>
                     }

@@ -1,0 +1,71 @@
+@using SearchTablePoC.ViewModels
+@model ItemDetailViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "品目詳細入力";
+    var colorJson = JsonSerializer.Serialize(Model.Colors);
+}
+
+<section class="detail-header">
+    <div>
+        <p class="eyebrow">品目コードから遷移した詳細入力サンプル</p>
+        <h2>カラー別・サイズ別の数量と納期を入力できます</h2>
+        <p class="lede">一覧の品目コードをクリックすると本画面が新規タブで開き、カラー毎にサイズ別の数量と個別納期を記入できます。サイズ列は必要に応じて追加してください。</p>
+    </div>
+    <div class="detail-meta">
+        <div>
+            <span class="meta-label">品目コード</span>
+            <strong class="meta-value">@Model.ItemCode</strong>
+        </div>
+        <div>
+            <span class="meta-label">品目名</span>
+            <strong class="meta-value">@Model.ItemName</strong>
+        </div>
+        <div>
+            <span class="meta-label">生地種別</span>
+            <strong class="meta-value">@Model.FabricType</strong>
+        </div>
+    </div>
+</section>
+
+<section class="detail-card">
+    <div class="detail-actions">
+        <div>
+            <h3>サイズ列の追加</h3>
+            <p class="hint">未確定なサイズにも対応できるよう、任意のサイズ名で列を追加できます。</p>
+            <div class="size-add-controls">
+                <input type="text" id="size-label-input" placeholder="例: 2XL" aria-label="追加するサイズ名" />
+                <button type="button" id="add-size-button" class="primary">サイズ列を追加</button>
+            </div>
+        </div>
+        <div class="callout">
+            <strong>操作のポイント</strong>
+            <ul>
+                <li>数量を変更すると、カラー行の合計が自動で再計算されます。</li>
+                <li>納期はサイズごとに個別指定できます。</li>
+                <li>下部の合計欄でサイズ別・全体の集計を確認できます。</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="detail-table-wrapper">
+        <table id="size-entry-table" class="detail-table" data-item-code="@Model.ItemCode" data-item-name="@Model.ItemName" data-fabric-type="@Model.FabricType"></table>
+    </div>
+
+    <div class="detail-summary">
+        <div class="summary-header">
+            <div>
+                <p class="eyebrow">サイズ別集計</p>
+                <h3>入力済み数量の合計</h3>
+            </div>
+            <p class="hint">カラー別入力の内容を自動で集計します。納期の確認と合わせて利用してください。</p>
+        </div>
+        <div class="summary-grid" id="size-summary-grid"></div>
+    </div>
+</section>
+
+<script type="application/json" id="color-data">@Html.Raw(colorJson)</script>
+
+@section Scripts {
+    <script src="~/js/item-detail.js"></script>
+}

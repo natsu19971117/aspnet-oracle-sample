@@ -199,7 +199,21 @@
             visibleColumns.forEach(column => {
                 const cell = document.createElement('td');
                 cell.dataset.column = column.PropertyName;
-                cell.textContent = dataRow[column.PropertyName] ?? '';
+
+                if (column.PropertyName === 'Field02') {
+                    const code = dataRow[column.PropertyName] ?? '';
+                    if (code) {
+                        const link = document.createElement('a');
+                        link.href = `/Items/Detail?itemCode=${encodeURIComponent(code)}`;
+                        link.target = '_blank';
+                        link.rel = 'noopener';
+                        link.textContent = code;
+                        cell.appendChild(link);
+                    }
+                } else {
+                    cell.textContent = dataRow[column.PropertyName] ?? '';
+                }
+
                 row.appendChild(cell);
             });
             tbody.appendChild(row);

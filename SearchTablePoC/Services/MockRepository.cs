@@ -64,6 +64,17 @@ public sealed class MockRepository
         return builder.ToString();
     }
 
+    public Record? GetRecordByItemCode(string itemCode)
+    {
+        if (string.IsNullOrWhiteSpace(itemCode))
+        {
+            return null;
+        }
+
+        return _records.FirstOrDefault(record =>
+            record.Field02.Equals(itemCode, StringComparison.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<string> GetSuggestions(string propertyName, RecordQuery query, string? term, int limit = 10)
     {
         if (string.IsNullOrWhiteSpace(propertyName) || !RecordMetadata.ColumnLookup.TryGetValue(propertyName, out var column))
