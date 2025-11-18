@@ -82,7 +82,7 @@
         summaryGrid.appendChild(totalItem);
     }
 
-    function createSizeCell(color, sizeLabel) {
+    function createSizeCell(color, sizeLabel, colorIndex) {
         const entry = ensureSizeEntry(color, sizeLabel);
         const cell = document.createElement('td');
         cell.className = 'size-entry-cell';
@@ -90,13 +90,13 @@
         const quantityLabel = document.createElement('label');
         quantityLabel.textContent = '数量';
         quantityLabel.className = 'visually-hidden';
-        quantityLabel.htmlFor = `qty-${color.colorNumber}-${sizeLabel}`;
+        quantityLabel.htmlFor = `qty-${colorIndex}-${sizeLabel}`;
 
         const quantityInput = document.createElement('input');
         quantityInput.type = 'number';
         quantityInput.min = '0';
         quantityInput.value = entry.quantity ?? 0;
-        quantityInput.id = `qty-${color.colorNumber}-${sizeLabel}`;
+        quantityInput.id = `qty-${colorIndex}-${sizeLabel}`;
         quantityInput.setAttribute('aria-label', `${color.colorName} ${sizeLabel}の数量`);
         quantityInput.addEventListener('input', () => {
             const value = parseInt(quantityInput.value, 10);
@@ -114,6 +114,24 @@
         cell.appendChild(quantityLabel);
         cell.appendChild(quantityWrapper);
 
+        return cell;
+    }
+
+    function createEditableTextCell(color, key, className, ariaLabel, placeholder = '') {
+        const cell = document.createElement('td');
+        cell.className = className;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = color[key] || '';
+        input.placeholder = placeholder;
+        input.className = 'editable-text-input';
+        input.setAttribute('aria-label', ariaLabel);
+        input.addEventListener('input', () => {
+            color[key] = input.value;
+        });
+
+        cell.appendChild(input);
         return cell;
     }
 
@@ -202,20 +220,38 @@
             colors.forEach((color, index) => {
                 const row = tbody.insertRow();
 
-                const fabricCell = row.insertCell();
-                fabricCell.textContent = color.fabricColor;
-                fabricCell.className = 'fabric-color-column fixed-column';
+                row.appendChild(
+                    createEditableTextCell(
+                        color,
+                        'fabricColor',
+                        'fabric-color-column fixed-column',
+                        '生地カラーを入力',
+                        '例: ネイビー'
+                    )
+                );
 
-                const numberCell = row.insertCell();
-                numberCell.textContent = color.colorNumber;
-                numberCell.className = 'color-number-column fixed-column';
+                row.appendChild(
+                    createEditableTextCell(
+                        color,
+                        'colorNumber',
+                        'color-number-column fixed-column',
+                        'カラーNoを入力',
+                        '例: C101'
+                    )
+                );
 
-                const nameCell = row.insertCell();
-                nameCell.textContent = color.colorName;
-                nameCell.className = 'color-name-column fixed-column';
+                row.appendChild(
+                    createEditableTextCell(
+                        color,
+                        'colorName',
+                        'color-name-column fixed-column',
+                        'カラー名を入力',
+                        '例: ダークネイビー'
+                    )
+                );
 
                 sizeOrder.forEach(size => {
-                    row.appendChild(createSizeCell(color, size));
+                    row.appendChild(createSizeCell(color, size, index));
                 });
 
                 const totalCell = row.insertCell();
