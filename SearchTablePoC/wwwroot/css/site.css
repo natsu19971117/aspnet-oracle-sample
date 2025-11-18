@@ -391,7 +391,15 @@ body {
     margin-bottom: 0.4rem;
 }
 
-.quantity-row input,
+.quantity-row input {
+    width: 9ch;
+    min-width: 9ch;
+    box-sizing: border-box;
+    padding: 0.45rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}
+
 .due-date-row input {
     flex: 1;
     padding: 0.45rem;
