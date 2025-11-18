@@ -380,7 +380,8 @@ body {
 }
 
 .total-column {
-    width: 120px;
+    width: 96px;
+    min-width: 96px;
 }
 
 .quantity-row,

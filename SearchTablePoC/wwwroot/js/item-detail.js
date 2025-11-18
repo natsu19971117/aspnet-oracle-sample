@@ -179,17 +179,17 @@
             headerRow.appendChild(th);
         });
 
-        const dueTh = document.createElement('th');
-        dueTh.scope = 'col';
-        dueTh.textContent = '納期';
-        dueTh.className = 'due-column fixed-column';
-        headerRow.appendChild(dueTh);
-
         const totalTh = document.createElement('th');
         totalTh.scope = 'col';
         totalTh.textContent = '合計数';
         totalTh.className = 'total-column fixed-column';
         headerRow.appendChild(totalTh);
+
+        const dueTh = document.createElement('th');
+        dueTh.scope = 'col';
+        dueTh.textContent = '納期';
+        dueTh.className = 'due-column fixed-column';
+        headerRow.appendChild(dueTh);
 
         const tbody = table.createTBody();
         if (colors.length === 0) {
@@ -218,14 +218,14 @@
                     row.appendChild(createSizeCell(color, size));
                 });
 
-                row.appendChild(createDueDateCell(color, index));
-
                 const totalCell = row.insertCell();
                 totalCell.className = 'total-cell total-column fixed-column';
                 const totalValue = document.createElement('span');
                 totalValue.dataset.totalFor = String(index);
                 totalValue.textContent = '0 枚';
                 totalCell.appendChild(totalValue);
+
+                row.appendChild(createDueDateCell(color, index));
             });
         }
 
