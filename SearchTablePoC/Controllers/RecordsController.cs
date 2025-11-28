@@ -137,17 +137,23 @@ public sealed class RecordsController : Controller
     }
 
     [HttpGet]
-    public IActionResult Integration()
+    public IActionResult Integration([FromQuery] IntegrationFilter filter, [FromQuery] IntegrationOverrides overrides)
     {
-        var viewModel = BuildIntegrationViewModel();
+        var viewModel = BuildIntegrationViewModel(filter, overrides);
         return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Integrate([FromForm] List<string> orderNumbers)
+    public IActionResult Integrate(
+        [FromForm] List<string> orderNumbers,
+        [FromForm] IntegrationFilter filter,
+        [FromForm] IntegrationOverrides overrides)
     {
-        var result = _repository.IntegrateOrders(orderNumbers ?? new List<string>());
+        filter ??= new IntegrationFilter();
+        overrides ??= new IntegrationOverrides();
+
+        var result = _repository.IntegrateOrders(orderNumbers ?? new List<string>(), overrides);
         if (!result.Success)
         {
             TempData["IntegrationError"] = result.Error;
@@ -157,13 +163,15 @@ public sealed class RecordsController : Controller
             TempData["IntegrationMessage"] = $"発注No {result.Record.Field01} で統合しました。";
         }
 
-        return RedirectToAction(nameof(Integration));
+        return RedirectToAction(nameof(Integration), BuildIntegrationRoute(filter, overrides));
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult UndoIntegration([FromForm] string integrationOrderNo)
+    public IActionResult UndoIntegration([FromForm] string integrationOrderNo, [FromForm] IntegrationFilter filter)
     {
+        filter ??= new IntegrationFilter();
+
         var result = _repository.UndoIntegration(integrationOrderNo);
         if (!result.Success)
         {
@@ -174,7 +182,7 @@ public sealed class RecordsController : Controller
             TempData["IntegrationMessage"] = $"発注No {integrationOrderNo} の統合を解除しました。";
         }
 
-        return RedirectToAction(nameof(Integration));
+        return RedirectToAction(nameof(Integration), BuildIntegrationRoute(filter, new IntegrationOverrides()));
     }
 
     private static string BuildSummaryText(int totalCount, RecordQuery query)
@@ -189,12 +197,17 @@ public sealed class RecordsController : Controller
         return $"Showing {start} - {end} of {totalCount} records";
     }
 
-    private OrderIntegrationViewModel BuildIntegrationViewModel()
+    private OrderIntegrationViewModel BuildIntegrationViewModel(IntegrationFilter filter, IntegrationOverrides overrides)
     {
+        filter ??= new IntegrationFilter();
+        overrides ??= new IntegrationOverrides();
+
         var viewModel = new OrderIntegrationViewModel
         {
-            AvailableRecords = _repository.GetIntegrationCandidates(),
-            IntegratedOrders = _repository.GetIntegrationGroups()
+            AvailableRecords = _repository.GetIntegrationCandidates(filter),
+            IntegratedOrders = _repository.GetIntegrationGroups(filter),
+            Filter = filter,
+            Overrides = overrides
         };
 
         if (TempData.TryGetValue("IntegrationMessage", out var message))
@@ -208,5 +221,19 @@ public sealed class RecordsController : Controller
         }
 
         return viewModel;
+    }
+
+    private static object BuildIntegrationRoute(IntegrationFilter filter, IntegrationOverrides overrides)
+    {
+        return new
+        {
+            filter.Keyword,
+            filter.PersonInCharge,
+            filter.UpdatedFrom,
+            filter.UpdatedTo,
+            overrides.ManualRequestNo,
+            overrides.ManualContractDate,
+            overrides.ManualPersonInCharge
+        };
     }
 }
