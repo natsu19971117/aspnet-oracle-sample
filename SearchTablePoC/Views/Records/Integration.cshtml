@@ -6,8 +6,40 @@
 
 <section class="search-section">
     <div class="search-header">
+        <h2>統合対象を絞り込む</h2>
+        <p class="section-subtitle">関連のある発注のみ表示するための検索条件を入力してください。統合済みの解除対象も同じ条件で絞り込まれます。</p>
+    </div>
+
+    <form method="get" class="integration-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label asp-for="Filter.Keyword">キーワード</label>
+                <input asp-for="Filter.Keyword" type="text" placeholder="発注No・依頼No・担当者で検索" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Filter.PersonInCharge">担当者</label>
+                <input asp-for="Filter.PersonInCharge" type="text" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Filter.UpdatedFrom">契約日（From）</label>
+                <input asp-for="Filter.UpdatedFrom" type="date" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Filter.UpdatedTo">契約日（To）</label>
+                <input asp-for="Filter.UpdatedTo" type="date" />
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="secondary">条件を適用</button>
+            <a class="secondary" href="@Url.Action("Integration")">条件をクリア</a>
+        </div>
+    </form>
+</section>
+
+<section class="search-section">
+    <div class="search-header">
         <h2>発注統合</h2>
-        <p class="section-subtitle">発注Noを3件以上選択して統合します。数値項目は合算し、その他の項目は最小発注Noの情報が採用されます。</p>
+        <p class="section-subtitle">発注Noを3件以上選択して統合します。数値項目は合算し、その他の項目は統合前に入力した内容を優先します。</p>
     </div>
 
     @if (!string.IsNullOrWhiteSpace(Model.Message))
@@ -22,6 +54,29 @@
 
     <form asp-action="Integrate" method="post" class="integration-form">
         @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Filter.Keyword" />
+        <input type="hidden" asp-for="Filter.PersonInCharge" />
+        <input type="hidden" asp-for="Filter.UpdatedFrom" />
+        <input type="hidden" asp-for="Filter.UpdatedTo" />
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label asp-for="Overrides.ManualRequestNo">統合後の依頼No</label>
+                <input asp-for="Overrides.ManualRequestNo" type="number" min="0" />
+                <p class="helper-text">未入力の場合は元の依頼Noを合算します。</p>
+            </div>
+            <div class="form-group">
+                <label asp-for="Overrides.ManualContractDate">統合後の契約日</label>
+                <input asp-for="Overrides.ManualContractDate" type="date" />
+                <p class="helper-text">指定すると最小発注Noではなく入力した日付が採用されます。</p>
+            </div>
+            <div class="form-group">
+                <label asp-for="Overrides.ManualPersonInCharge">統合後の担当者</label>
+                <input asp-for="Overrides.ManualPersonInCharge" type="text" />
+                <p class="helper-text">空欄のままの場合は最小発注Noの担当者名が使用されます。</p>
+            </div>
+        </div>
+
         <div class="table-wrapper">
             <table class="integration-table">
                 <thead>
@@ -38,7 +93,7 @@
                     @if (!Model.AvailableRecords.Any())
                     {
                         <tr class="empty">
-                            <td colspan="6">統合可能な発注がありません。</td>
+                            <td colspan="6">絞り込み条件に一致する統合可能な発注がありません。</td>
                         </tr>
                     }
                     else
@@ -89,7 +144,7 @@
                 @if (!Model.IntegratedOrders.Any())
                 {
                     <tr class="empty">
-                        <td colspan="5">統合済みの発注はありません。</td>
+                        <td colspan="5">絞り込み条件に関連する統合済みの発注はありません。</td>
                     </tr>
                 }
                 else
@@ -112,6 +167,10 @@
                                 <form asp-action="UndoIntegration" method="post" class="inline-form">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="integrationOrderNo" value="@group.IntegrationOrderNo" />
+                                    <input type="hidden" asp-for="Filter.Keyword" />
+                                    <input type="hidden" asp-for="Filter.PersonInCharge" />
+                                    <input type="hidden" asp-for="Filter.UpdatedFrom" />
+                                    <input type="hidden" asp-for="Filter.UpdatedTo" />
                                     <button type="submit" class="secondary">統合解除</button>
                                 </form>
                             </td>

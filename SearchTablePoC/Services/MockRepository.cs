@@ -106,23 +106,41 @@ public sealed class MockRepository
         return suggestions;
     }
 
-    public IReadOnlyList<Record> GetIntegrationCandidates()
+    public IReadOnlyList<Record> GetIntegrationCandidates(IntegrationFilter? filter = null)
     {
-        return _records
-            .Where(record => !record.IsIntegrationResult)
+        var candidates = _records
+            .Where(record => !record.IsIntegrationResult);
+
+        if (filter is not null && filter.HasCriteria)
+        {
+            candidates = ApplyIntegrationFilter(candidates, filter);
+        }
+
+        return candidates
             .OrderBy(record => record.Field01, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
-    public IReadOnlyList<IntegrationGroup> GetIntegrationGroups()
+    public IReadOnlyList<IntegrationGroup> GetIntegrationGroups(IntegrationFilter? filter = null)
     {
-        return _integrationGroups.Values
+        var groups = _integrationGroups.Values.AsEnumerable();
+
+        if (filter is not null && filter.HasCriteria)
+        {
+            groups = groups.Where(group =>
+                ApplyIntegrationFilter(group.SourceRecords, filter).Any()
+                || ApplyIntegrationFilter(new[] { group.IntegratedRecord }, filter).Any());
+        }
+
+        return groups
             .OrderBy(group => group.IntegrationOrderNo, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
-    public IntegrationOperationResult IntegrateOrders(IReadOnlyCollection<string> orderNumbers)
+    public IntegrationOperationResult IntegrateOrders(IReadOnlyCollection<string> orderNumbers, IntegrationOverrides overrides)
     {
+        overrides ??= new IntegrationOverrides();
+
         var distinctOrderNumbers = orderNumbers
             .Where(n => !string.IsNullOrWhiteSpace(n))
             .Select(n => n.Trim())
@@ -145,7 +163,7 @@ public sealed class MockRepository
         }
 
         var newOrderNo = GenerateIntegrationOrderNo();
-        var integrated = BuildIntegratedRecord(sourceRecords, newOrderNo);
+        var integrated = BuildIntegratedRecord(sourceRecords, newOrderNo, overrides);
         var originalCopies = sourceRecords.Select(CloneRecord).ToList();
 
         _records.RemoveAll(record => distinctOrderNumbers.Any(number => number.Equals(record.Field01, StringComparison.OrdinalIgnoreCase)));
@@ -326,7 +344,38 @@ public sealed class MockRepository
         return sorted;
     }
 
-    private Record BuildIntegratedRecord(IReadOnlyCollection<Record> sourceRecords, string newOrderNo)
+    private static IEnumerable<Record> ApplyIntegrationFilter(IEnumerable<Record> source, IntegrationFilter filter)
+    {
+        var results = source;
+
+        if (!string.IsNullOrWhiteSpace(filter.Keyword))
+        {
+            var keyword = filter.Keyword.Trim();
+            results = results.Where(record =>
+                record.Field01.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || record.Id.ToString(CultureInfo.InvariantCulture).Contains(keyword, StringComparison.OrdinalIgnoreCase)
+                || record.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.PersonInCharge))
+        {
+            results = results.Where(record => record.Name.Contains(filter.PersonInCharge, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (filter.UpdatedFrom.HasValue)
+        {
+            results = results.Where(record => record.UpdatedAt >= filter.UpdatedFrom.Value);
+        }
+
+        if (filter.UpdatedTo.HasValue)
+        {
+            results = results.Where(record => record.UpdatedAt <= filter.UpdatedTo.Value);
+        }
+
+        return results;
+    }
+
+    private Record BuildIntegratedRecord(IReadOnlyCollection<Record> sourceRecords, string newOrderNo, IntegrationOverrides overrides)
     {
         var template = sourceRecords
             .OrderBy(record => record.Field01, StringComparer.OrdinalIgnoreCase)
@@ -335,8 +384,18 @@ public sealed class MockRepository
             .First();
 
         template.Field01 = newOrderNo;
-        template.Id = sourceRecords.Sum(record => record.Id);
+        template.Id = overrides.ManualRequestNo ?? sourceRecords.Sum(record => record.Id);
         template.Amount = sourceRecords.Sum(record => record.Amount);
+        if (overrides.ManualContractDate.HasValue)
+        {
+            template.UpdatedAt = overrides.ManualContractDate.Value;
+        }
+
+        if (!string.IsNullOrWhiteSpace(overrides.ManualPersonInCharge))
+        {
+            template.Name = overrides.ManualPersonInCharge.Trim();
+        }
+
         template.IsIntegrationResult = true;
 
         return template;
