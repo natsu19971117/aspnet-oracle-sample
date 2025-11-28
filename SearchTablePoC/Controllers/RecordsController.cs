@@ -136,6 +136,47 @@ public sealed class RecordsController : Controller
         return File(System.Text.Encoding.UTF8.GetBytes(csv), "text/csv", "records.csv");
     }
 
+    [HttpGet]
+    public IActionResult Integration()
+    {
+        var viewModel = BuildIntegrationViewModel();
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Integrate([FromForm] List<string> orderNumbers)
+    {
+        var result = _repository.IntegrateOrders(orderNumbers ?? new List<string>());
+        if (!result.Success)
+        {
+            TempData["IntegrationError"] = result.Error;
+        }
+        else if (result.Record is not null)
+        {
+            TempData["IntegrationMessage"] = $"発注No {result.Record.Field01} で統合しました。";
+        }
+
+        return RedirectToAction(nameof(Integration));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UndoIntegration([FromForm] string integrationOrderNo)
+    {
+        var result = _repository.UndoIntegration(integrationOrderNo);
+        if (!result.Success)
+        {
+            TempData["IntegrationError"] = result.Error;
+        }
+        else
+        {
+            TempData["IntegrationMessage"] = $"発注No {integrationOrderNo} の統合を解除しました。";
+        }
+
+        return RedirectToAction(nameof(Integration));
+    }
+
     private static string BuildSummaryText(int totalCount, RecordQuery query)
     {
         if (totalCount == 0)
@@ -146,5 +187,26 @@ public sealed class RecordsController : Controller
         var start = (query.Page - 1) * query.PageSize + 1;
         var end = Math.Min(query.Page * query.PageSize, totalCount);
         return $"Showing {start} - {end} of {totalCount} records";
+    }
+
+    private OrderIntegrationViewModel BuildIntegrationViewModel()
+    {
+        var viewModel = new OrderIntegrationViewModel
+        {
+            AvailableRecords = _repository.GetIntegrationCandidates(),
+            IntegratedOrders = _repository.GetIntegrationGroups()
+        };
+
+        if (TempData.TryGetValue("IntegrationMessage", out var message))
+        {
+            viewModel.Message = message as string;
+        }
+
+        if (TempData.TryGetValue("IntegrationError", out var error))
+        {
+            viewModel.Error = error as string;
+        }
+
+        return viewModel;
     }
 }

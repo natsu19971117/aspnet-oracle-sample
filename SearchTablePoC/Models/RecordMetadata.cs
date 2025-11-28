@@ -41,6 +41,7 @@ public static class RecordMetadata
         {
             new("Id", "依頼No", ColumnDataType.Number),
             new("Field01", "発注No", ColumnDataType.Text),
+            new("IntegrationStatus", "発注統合有無", ColumnDataType.Text),
             new("Category", "部課", ColumnDataType.Text),
             new("Status", "係", ColumnDataType.Text),
             new("Name", "担当者", ColumnDataType.Text),

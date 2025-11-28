@@ -1,0 +1,11 @@
+using SearchTablePoC.Models;
+
+namespace SearchTablePoC.ViewModels;
+
+public sealed class OrderIntegrationViewModel
+{
+    public IReadOnlyList<Record> AvailableRecords { get; init; } = Array.Empty<Record>();
+    public IReadOnlyList<IntegrationGroup> IntegratedOrders { get; init; } = Array.Empty<IntegrationGroup>();
+    public string? Message { get; init; }
+    public string? Error { get; init; }
+}

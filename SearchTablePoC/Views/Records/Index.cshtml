@@ -130,6 +130,7 @@
                 <option value="100" selected="@(Model.Query.PageSize == 100 ? "selected" : null)">100</option>
             </select>
             <button type="button" id="download-csv" class="secondary">CSV</button>
+            <a class="secondary" href="@Url.Action("Integration")">発注統合</a>
         </div>
     </div>
     <div class="table-wrapper">
@@ -183,6 +184,12 @@
                                         <a href="@Url.Action("Detail", "Items", new { itemCode = record.Field02 })" target="_blank" rel="noopener">
                                             @RecordMetadata.FormatValue(record, column)
                                         </a>
+                                    </td>
+                                }
+                                else if (column.PropertyName == nameof(Record.IntegrationStatus))
+                                {
+                                    <td data-column="@column.PropertyName">
+                                        <a href="@Url.Action("Integration")" class="integration-link">@RecordMetadata.FormatValue(record, column)</a>
                                     </td>
                                 }
                                 else

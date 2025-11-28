@@ -210,6 +210,13 @@
                         link.textContent = code;
                         cell.appendChild(link);
                     }
+                } else if (column.PropertyName === 'IntegrationStatus') {
+                    const status = dataRow[column.PropertyName] ?? '';
+                    const link = document.createElement('a');
+                    link.href = '/Records/Integration';
+                    link.className = 'integration-link';
+                    link.textContent = status;
+                    cell.appendChild(link);
                 } else {
                     cell.textContent = dataRow[column.PropertyName] ?? '';
                 }

@@ -8,6 +8,8 @@ public sealed class Record
     public string Status { get; set; } = string.Empty;
     public DateOnly UpdatedAt { get; set; }
     public int Amount { get; set; }
+    public bool IsIntegrationResult { get; set; }
+    public string IntegrationStatus => IsIntegrationResult ? "あり" : "なし";
     public string Field01 { get; set; } = string.Empty;
     public string Field02 { get; set; } = string.Empty;
     public string Field03 { get; set; } = string.Empty;
