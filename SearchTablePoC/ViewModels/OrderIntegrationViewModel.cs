@@ -1,4 +1,5 @@
 using SearchTablePoC.Models;
+using SearchTablePoC.Services;
 
 namespace SearchTablePoC.ViewModels;
 
