@@ -1,0 +1,124 @@
+@using System.Linq
+@model OrderIntegrationViewModel
+@{
+    ViewData["Title"] = "発注統合";
+}
+
+<section class="search-section">
+    <div class="search-header">
+        <h2>発注統合</h2>
+        <p class="section-subtitle">発注Noを3件以上選択して統合します。数値項目は合算し、その他の項目は最小発注Noの情報が採用されます。</p>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="status-banner success" role="status">@Model.Message</div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Error))
+    {
+        <div class="status-banner error" role="alert">@Model.Error</div>
+    }
+
+    <form asp-action="Integrate" method="post" class="integration-form">
+        @Html.AntiForgeryToken()
+        <div class="table-wrapper">
+            <table class="integration-table">
+                <thead>
+                    <tr>
+                        <th scope="col">選択</th>
+                        <th scope="col">発注No</th>
+                        <th scope="col">依頼No</th>
+                        <th scope="col">契約数量</th>
+                        <th scope="col">契約日</th>
+                        <th scope="col">担当者</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.AvailableRecords.Any())
+                    {
+                        <tr class="empty">
+                            <td colspan="6">統合可能な発注がありません。</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var record in Model.AvailableRecords)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="orderNumbers" value="@record.Field01" aria-label="@record.Field01 を統合対象に追加" />
+                                </td>
+                                <td>@record.Field01</td>
+                                <td>@record.Id</td>
+                                <td>@record.Amount</td>
+                                <td>@record.UpdatedAt.ToString("yyyy-MM-dd")</td>
+                                <td>@record.Name</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="helper-text">※ 発注統合有無列をクリックするとこの画面に戻ります。統合には3件以上の発注Noを選択してください。</p>
+        <div class="form-actions">
+            <button type="submit" class="primary">統合する</button>
+            <a class="secondary" href="@Url.Action("Index")">一覧に戻る</a>
+        </div>
+    </form>
+</section>
+
+<section class="search-section">
+    <div class="search-header">
+        <h2>統合解除</h2>
+        <p class="section-subtitle">統合された発注は新規発注Noのみ一覧に表示されています。解除すると元の発注Noを再表示します。</p>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="integration-table">
+            <thead>
+                <tr>
+                    <th scope="col">統合済み発注No</th>
+                    <th scope="col">元の発注No</th>
+                    <th scope="col">契約数量</th>
+                    <th scope="col">担当者</th>
+                    <th scope="col">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.IntegratedOrders.Any())
+                {
+                    <tr class="empty">
+                        <td colspan="5">統合済みの発注はありません。</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var group in Model.IntegratedOrders)
+                    {
+                        <tr>
+                            <td>@group.IntegrationOrderNo</td>
+                            <td>
+                                <ul class="source-list">
+                                    @foreach (var source in group.SourceRecords)
+                                    {
+                                        <li>@source.Field01</li>
+                                    }
+                                </ul>
+                            </td>
+                            <td>@group.IntegratedRecord.Amount</td>
+                            <td>@group.IntegratedRecord.Name</td>
+                            <td>
+                                <form asp-action="UndoIntegration" method="post" class="inline-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="integrationOrderNo" value="@group.IntegrationOrderNo" />
+                                    <button type="submit" class="secondary">統合解除</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

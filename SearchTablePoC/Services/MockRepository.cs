@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using SearchTablePoC.Models;
 using SearchTablePoC.ViewModels;
@@ -8,11 +9,14 @@ namespace SearchTablePoC.Services;
 public sealed class MockRepository
 {
     private readonly List<Record> _records;
+    private readonly Dictionary<string, IntegrationGroup> _integrationGroups = new(StringComparer.OrdinalIgnoreCase);
+    private int _integrationSequence;
     private readonly Random _random = new();
 
     public MockRepository()
     {
         _records = GenerateRecords(520);
+        _integrationSequence = _records.Count + 1;
     }
 
     public RecordsResult GetRecords(RecordQuery query, bool applyPaging = true)
@@ -100,6 +104,86 @@ public sealed class MockRepository
             .ToList();
 
         return suggestions;
+    }
+
+    public IReadOnlyList<Record> GetIntegrationCandidates()
+    {
+        return _records
+            .Where(record => !record.IsIntegrationResult)
+            .OrderBy(record => record.Field01, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    public IReadOnlyList<IntegrationGroup> GetIntegrationGroups()
+    {
+        return _integrationGroups.Values
+            .OrderBy(group => group.IntegrationOrderNo, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    public IntegrationOperationResult IntegrateOrders(IReadOnlyCollection<string> orderNumbers)
+    {
+        var distinctOrderNumbers = orderNumbers
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Select(n => n.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (distinctOrderNumbers.Count < 3)
+        {
+            return IntegrationOperationResult.Failed("発注統合は3件以上を選択してください。");
+        }
+
+        var candidates = GetIntegrationCandidates();
+        var sourceRecords = candidates
+            .Where(record => distinctOrderNumbers.Any(number => number.Equals(record.Field01, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
+        if (sourceRecords.Count != distinctOrderNumbers.Count)
+        {
+            return IntegrationOperationResult.Failed("選択された発注Noのうち統合できないものがあります。");
+        }
+
+        var newOrderNo = GenerateIntegrationOrderNo();
+        var integrated = BuildIntegratedRecord(sourceRecords, newOrderNo);
+        var originalCopies = sourceRecords.Select(CloneRecord).ToList();
+
+        _records.RemoveAll(record => distinctOrderNumbers.Any(number => number.Equals(record.Field01, StringComparison.OrdinalIgnoreCase)));
+        _records.Add(integrated);
+
+        _integrationGroups[newOrderNo] = new IntegrationGroup
+        {
+            IntegrationOrderNo = newOrderNo,
+            IntegratedRecord = integrated,
+            SourceRecords = originalCopies
+        };
+
+        return IntegrationOperationResult.Succeeded(integrated);
+    }
+
+    public IntegrationOperationResult UndoIntegration(string integrationOrderNo)
+    {
+        if (string.IsNullOrWhiteSpace(integrationOrderNo))
+        {
+            return IntegrationOperationResult.Failed("統合解除対象の発注Noを指定してください。");
+        }
+
+        if (!_integrationGroups.TryGetValue(integrationOrderNo, out var group))
+        {
+            return IntegrationOperationResult.Failed("指定の発注統合は見つかりません。");
+        }
+
+        _records.RemoveAll(record => record.Field01.Equals(integrationOrderNo, StringComparison.OrdinalIgnoreCase));
+
+        foreach (var record in group.SourceRecords)
+        {
+            record.IsIntegrationResult = false;
+            _records.Add(CloneRecord(record));
+        }
+
+        _integrationGroups.Remove(integrationOrderNo);
+
+        return IntegrationOperationResult.Succeeded(group.IntegratedRecord);
     }
 
     private static string Escape(string value)
@@ -240,6 +324,53 @@ public sealed class MockRepository
             : source.OrderBy(column.Accessor, comparer);
 
         return sorted;
+    }
+
+    private Record BuildIntegratedRecord(IReadOnlyCollection<Record> sourceRecords, string newOrderNo)
+    {
+        var template = sourceRecords
+            .OrderBy(record => record.Field01, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(record => record.Id)
+            .Select(CloneRecord)
+            .First();
+
+        template.Field01 = newOrderNo;
+        template.Id = sourceRecords.Sum(record => record.Id);
+        template.Amount = sourceRecords.Sum(record => record.Amount);
+        template.IsIntegrationResult = true;
+
+        return template;
+    }
+
+    private string GenerateIntegrationOrderNo()
+    {
+        string candidate;
+        do
+        {
+            candidate = $"INT-{DateTime.UtcNow:yyyyMMdd}-{_integrationSequence:0000}";
+            _integrationSequence++;
+        }
+        while (_records.Any(record => record.Field01.Equals(candidate, StringComparison.OrdinalIgnoreCase))
+            || _integrationGroups.ContainsKey(candidate));
+
+        return candidate;
+    }
+
+    private static Record CloneRecord(Record source)
+    {
+        var clone = new Record();
+        foreach (var property in typeof(Record).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (!property.CanRead || !property.CanWrite)
+            {
+                continue;
+            }
+
+            var value = property.GetValue(source);
+            property.SetValue(clone, value);
+        }
+
+        return clone;
     }
 
     private List<Record> GenerateRecords(int count)
@@ -405,4 +536,29 @@ public sealed class RecordsResult
 {
     public required IReadOnlyList<Record> Items { get; init; }
     public required int TotalCount { get; init; }
+}
+
+public sealed class IntegrationGroup
+{
+    public required string IntegrationOrderNo { get; init; }
+    public required Record IntegratedRecord { get; init; }
+    public required IReadOnlyList<Record> SourceRecords { get; init; }
+}
+
+public sealed class IntegrationOperationResult
+{
+    private IntegrationOperationResult(bool success, string? error, Record? record)
+    {
+        Success = success;
+        Error = error;
+        Record = record;
+    }
+
+    public bool Success { get; }
+    public string? Error { get; }
+    public Record? Record { get; }
+
+    public static IntegrationOperationResult Failed(string error) => new(false, error, null);
+
+    public static IntegrationOperationResult Succeeded(Record record) => new(true, null, record);
 }
