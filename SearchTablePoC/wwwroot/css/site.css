@@ -504,12 +504,14 @@ body {
     grid-template-columns: 1fr 1.6fr;
     gap: 1rem;
     align-items: stretch;
+    min-height: calc(100vh - 180px);
 }
 
 .integration-panel {
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .header-main {
@@ -517,6 +519,13 @@ body {
     align-items: center;
     gap: 0.65rem;
     flex-wrap: wrap;
+}
+
+.integration-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
 }
 
 .integration-panel > .integration-form {
@@ -543,36 +552,49 @@ body {
 .horizontal-form .form-group,
 .inline-label {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.6rem;
+    flex-wrap: wrap;
 }
 
 .horizontal-form .form-group label,
 .inline-label label {
     margin: 0;
-    white-space: nowrap;
+    white-space: normal;
     font-weight: 700;
+    line-height: 1.4;
 }
 
 .horizontal-form .form-group input,
 .inline-label input {
     flex: 1;
+    min-width: 0;
 }
 
 .integration-table-wrapper {
-    max-height: 380px;
+    flex: 1;
+    max-height: calc(100vh - 320px);
+    min-height: 260px;
     overflow: auto;
     margin-top: 0.25rem;
+    background: #fff;
+    border-radius: 8px;
 }
 
 .integration-table th,
 .integration-table td {
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .integration-table td ul {
     padding-left: 1rem;
     margin: 0;
+}
+
+.table-actions {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
 }
 
 @media (max-width: 900px) {
