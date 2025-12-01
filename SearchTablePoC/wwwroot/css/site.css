@@ -199,6 +199,12 @@ body {
     gap: 0.75rem;
 }
 
+.inline-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 .eyebrow {
     color: #1d4ed8;
     font-weight: 700;
@@ -477,6 +483,64 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+/* Integration page layout */
+.compact-card {
+    padding-bottom: 0.75rem;
+}
+
+.compact-form .form-group label {
+    margin-bottom: 0.2rem;
+}
+
+.compact-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    row-gap: 0.6rem;
+}
+
+.integration-layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+.integration-panel {
+    margin-bottom: 0;
+}
+
+.override-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 0.75rem;
+}
+
+.inline-label label {
+    font-weight: 700;
+}
+
+.integration-table-wrapper {
+    max-height: 380px;
+    overflow: auto;
+    margin-top: 0.25rem;
+}
+
+.integration-table th,
+.integration-table td {
+    white-space: nowrap;
+}
+
+.integration-table td ul {
+    padding-left: 1rem;
+    margin: 0;
+}
+
+@media (max-width: 1100px) {
+    .integration-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 .summary-header {

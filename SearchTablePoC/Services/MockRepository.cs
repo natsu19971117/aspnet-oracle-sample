@@ -147,9 +147,9 @@ public sealed class MockRepository
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        if (distinctOrderNumbers.Count < 3)
+        if (distinctOrderNumbers.Count < 2)
         {
-            return IntegrationOperationResult.Failed("発注統合は3件以上を選択してください。");
+            return IntegrationOperationResult.Failed("発注統合は2件以上を選択してください。");
         }
 
         var candidates = GetIntegrationCandidates();
