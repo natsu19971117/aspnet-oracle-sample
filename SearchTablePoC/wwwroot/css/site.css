@@ -501,13 +501,25 @@ body {
 
 .integration-layout {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
+    grid-template-columns: 1fr 1.6fr;
     gap: 1rem;
-    align-items: start;
+    align-items: stretch;
 }
 
 .integration-panel {
     margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.integration-panel > .integration-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.integration-table-wrapper {
+    flex: 1;
 }
 
 .override-grid {

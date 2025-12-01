@@ -40,7 +40,73 @@
 </section>
 
 <div class="integration-layout">
-    <section class="search-section integration-panel">
+    <section class="search-section integration-panel undo-panel">
+        <div class="search-header">
+            <h2>統合解除</h2>
+            <p class="section-subtitle">統合された発注は新規発注Noのみ一覧に表示されています。解除すると元の発注Noを再表示します。</p>
+        </div>
+
+        <div class="table-wrapper integration-table-wrapper">
+            <table class="integration-table">
+                <thead>
+                    <tr>
+                        <th scope="col">統合済み発注No</th>
+                        <th scope="col">元の発注No</th>
+                        <th scope="col">契約数量</th>
+                        <th scope="col">担当者</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.ShowUndoResults)
+                    {
+                        <tr class="empty">
+                            <td colspan="5">検索条件を入力し、「条件を適用」を押すと統合解除対象が表示されます。</td>
+                        </tr>
+                    }
+                    else if (!Model.IntegratedOrders.Any())
+                    {
+                        <tr class="empty">
+                            <td colspan="5">絞り込み条件に関連する統合済みの発注はありません。</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var group in Model.IntegratedOrders)
+                        {
+                            <tr>
+                                <td>@group.IntegrationOrderNo</td>
+                                <td>
+                                    <ul class="source-list">
+                                        @foreach (var source in group.SourceRecords)
+                                        {
+                                            <li>@source.Field01</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>@group.IntegratedRecord.Amount</td>
+                                <td>@group.IntegratedRecord.Name</td>
+                                <td>
+                                    <form asp-action="UndoIntegration" method="post" class="inline-form">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="integrationOrderNo" value="@group.IntegrationOrderNo" />
+                                        <input type="hidden" asp-for="Filter.Keyword" />
+                                        <input type="hidden" asp-for="Filter.PersonInCharge" />
+                                        <input type="hidden" asp-for="Filter.UpdatedFrom" />
+                                        <input type="hidden" asp-for="Filter.UpdatedTo" />
+                                        <input type="hidden" asp-for="Filter.SearchPerformed" />
+                                        <button type="submit" class="secondary">統合解除</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="search-section integration-panel integrate-panel">
         <div class="search-header">
             <div>
                 <h2>発注統合</h2>
@@ -134,71 +200,5 @@
         </div>
         <p class="helper-text">※ 発注統合有無列をクリックするとこの画面に戻ります。統合には2件以上の発注Noを選択してください。</p>
     </form>
-    </section>
-
-    <section class="search-section integration-panel">
-        <div class="search-header">
-            <h2>統合解除</h2>
-            <p class="section-subtitle">統合された発注は新規発注Noのみ一覧に表示されています。解除すると元の発注Noを再表示します。</p>
-        </div>
-
-        <div class="table-wrapper integration-table-wrapper">
-            <table class="integration-table">
-                <thead>
-                    <tr>
-                        <th scope="col">統合済み発注No</th>
-                        <th scope="col">元の発注No</th>
-                        <th scope="col">契約数量</th>
-                        <th scope="col">担当者</th>
-                        <th scope="col">操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (!Model.ShowUndoResults)
-                    {
-                        <tr class="empty">
-                            <td colspan="5">検索条件を入力し、「条件を適用」を押すと統合解除対象が表示されます。</td>
-                        </tr>
-                    }
-                    else if (!Model.IntegratedOrders.Any())
-                    {
-                        <tr class="empty">
-                            <td colspan="5">絞り込み条件に関連する統合済みの発注はありません。</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        foreach (var group in Model.IntegratedOrders)
-                        {
-                            <tr>
-                                <td>@group.IntegrationOrderNo</td>
-                                <td>
-                                    <ul class="source-list">
-                                        @foreach (var source in group.SourceRecords)
-                                        {
-                                            <li>@source.Field01</li>
-                                        }
-                                    </ul>
-                                </td>
-                                <td>@group.IntegratedRecord.Amount</td>
-                                <td>@group.IntegratedRecord.Name</td>
-                                <td>
-                                    <form asp-action="UndoIntegration" method="post" class="inline-form">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="integrationOrderNo" value="@group.IntegrationOrderNo" />
-                                        <input type="hidden" asp-for="Filter.Keyword" />
-                                        <input type="hidden" asp-for="Filter.PersonInCharge" />
-                                        <input type="hidden" asp-for="Filter.UpdatedFrom" />
-                                        <input type="hidden" asp-for="Filter.UpdatedTo" />
-                                        <input type="hidden" asp-for="Filter.SearchPerformed" />
-                                        <button type="submit" class="secondary">統合解除</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
     </section>
 </div>
