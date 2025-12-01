@@ -31,6 +31,7 @@
         </div>
         <div class="form-actions">
             <button type="submit" class="secondary">条件を適用</button>
+            <input type="hidden" asp-for="Filter.SearchPerformed" value="true" />
             <a class="secondary" href="@Url.Action("Integration")">条件をクリア</a>
         </div>
     </form>
@@ -58,6 +59,7 @@
         <input type="hidden" asp-for="Filter.PersonInCharge" />
         <input type="hidden" asp-for="Filter.UpdatedFrom" />
         <input type="hidden" asp-for="Filter.UpdatedTo" />
+        <input type="hidden" asp-for="Filter.SearchPerformed" />
 
         <div class="form-grid">
             <div class="form-group">
@@ -141,7 +143,13 @@
                 </tr>
             </thead>
             <tbody>
-                @if (!Model.IntegratedOrders.Any())
+                @if (!Model.ShowUndoResults)
+                {
+                    <tr class="empty">
+                        <td colspan="5">検索条件を入力し、「条件を適用」を押すと統合解除対象が表示されます。</td>
+                    </tr>
+                }
+                else if (!Model.IntegratedOrders.Any())
                 {
                     <tr class="empty">
                         <td colspan="5">絞り込み条件に関連する統合済みの発注はありません。</td>
@@ -171,6 +179,7 @@
                                     <input type="hidden" asp-for="Filter.PersonInCharge" />
                                     <input type="hidden" asp-for="Filter.UpdatedFrom" />
                                     <input type="hidden" asp-for="Filter.UpdatedTo" />
+                                    <input type="hidden" asp-for="Filter.SearchPerformed" />
                                     <button type="submit" class="secondary">統合解除</button>
                                 </form>
                             </td>

@@ -139,7 +139,11 @@ public sealed class RecordsController : Controller
     [HttpGet]
     public IActionResult Integration([FromQuery] IntegrationFilter filter, [FromQuery] IntegrationOverrides overrides)
     {
-        var viewModel = BuildIntegrationViewModel(filter, overrides);
+        var searchPerformed = (filter?.SearchPerformed == true)
+            || (filter?.HasCriteria == true)
+            || Request.Query.Count > 0;
+
+        var viewModel = BuildIntegrationViewModel(filter, overrides, searchPerformed);
         return View(viewModel);
     }
 
@@ -197,17 +201,21 @@ public sealed class RecordsController : Controller
         return $"Showing {start} - {end} of {totalCount} records";
     }
 
-    private OrderIntegrationViewModel BuildIntegrationViewModel(IntegrationFilter filter, IntegrationOverrides overrides)
+    private OrderIntegrationViewModel BuildIntegrationViewModel(IntegrationFilter filter, IntegrationOverrides overrides, bool showUndoResults)
     {
         filter ??= new IntegrationFilter();
         overrides ??= new IntegrationOverrides();
+        filter.SearchPerformed = showUndoResults;
 
         var viewModel = new OrderIntegrationViewModel
         {
             AvailableRecords = _repository.GetIntegrationCandidates(filter),
-            IntegratedOrders = _repository.GetIntegrationGroups(filter),
+            IntegratedOrders = showUndoResults
+                ? _repository.GetIntegrationGroups(filter)
+                : Array.Empty<IntegrationGroup>(),
             Filter = filter,
-            Overrides = overrides
+            Overrides = overrides,
+            ShowUndoResults = showUndoResults
         };
 
         if (TempData.TryGetValue("IntegrationMessage", out var message))
@@ -231,6 +239,7 @@ public sealed class RecordsController : Controller
             filter.PersonInCharge,
             filter.UpdatedFrom,
             filter.UpdatedTo,
+            filter.SearchPerformed,
             overrides.ManualRequestNo,
             overrides.ManualContractDate,
             overrides.ManualPersonInCharge
