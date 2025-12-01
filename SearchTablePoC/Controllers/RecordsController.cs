@@ -201,21 +201,23 @@ public sealed class RecordsController : Controller
         return $"Showing {start} - {end} of {totalCount} records";
     }
 
-    private OrderIntegrationViewModel BuildIntegrationViewModel(IntegrationFilter filter, IntegrationOverrides overrides, bool showUndoResults)
+    private OrderIntegrationViewModel BuildIntegrationViewModel(IntegrationFilter filter, IntegrationOverrides overrides, bool showResults)
     {
         filter ??= new IntegrationFilter();
         overrides ??= new IntegrationOverrides();
-        filter.SearchPerformed = showUndoResults;
+        filter.SearchPerformed = showResults;
 
         var viewModel = new OrderIntegrationViewModel
         {
-            AvailableRecords = _repository.GetIntegrationCandidates(filter),
-            IntegratedOrders = showUndoResults
+            AvailableRecords = showResults
+                ? _repository.GetIntegrationCandidates(filter)
+                : Array.Empty<Record>(),
+            IntegratedOrders = showResults
                 ? _repository.GetIntegrationGroups(filter)
                 : Array.Empty<IntegrationGroup>(),
             Filter = filter,
             Overrides = overrides,
-            ShowUndoResults = showUndoResults
+            ShowUndoResults = showResults
         };
 
         if (TempData.TryGetValue("IntegrationMessage", out var message))

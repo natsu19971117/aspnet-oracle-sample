@@ -92,7 +92,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!Model.AvailableRecords.Any())
+                    @if (!Model.Filter.SearchPerformed)
+                    {
+                        <tr class="empty">
+                            <td colspan="6">検索条件を入力し、「条件を適用」を押すと統合候補が表示されます。</td>
+                        </tr>
+                    }
+                    else if (!Model.AvailableRecords.Any())
                     {
                         <tr class="empty">
                             <td colspan="6">絞り込み条件に一致する統合可能な発注がありません。</td>
