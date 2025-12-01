@@ -4,46 +4,13 @@
     ViewData["Title"] = "発注統合";
 }
 
-<section class="search-section compact-card">
-        <div class="search-header">
-            <div>
-                <h2>統合対象を絞り込む</h2>
-                <p class="section-subtitle">統合候補を絞り込むための検索条件を入力してください。</p>
-            </div>
-            <div class="inline-actions">
-                <button type="submit" form="integration-filter" class="secondary">条件を適用</button>
-            <a class="secondary" href="@Url.Action("Integration")">条件をクリア</a>
-        </div>
-    </div>
-
-    <form id="integration-filter" method="get" class="integration-form compact-form">
-        <div class="form-grid compact-grid">
-            <div class="form-group">
-                <label asp-for="Filter.Keyword">キーワード</label>
-                <input asp-for="Filter.Keyword" type="text" placeholder="発注No・依頼No・担当者で検索" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Filter.PersonInCharge">担当者</label>
-                <input asp-for="Filter.PersonInCharge" type="text" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Filter.UpdatedFrom">契約日（From）</label>
-                <input asp-for="Filter.UpdatedFrom" type="date" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Filter.UpdatedTo">契約日（To）</label>
-                <input asp-for="Filter.UpdatedTo" type="date" />
-            </div>
-        </div>
-        <input type="hidden" asp-for="Filter.SearchPerformed" value="true" />
-    </form>
-</section>
-
 <div class="integration-layout">
     <section class="search-section integration-panel undo-panel">
         <div class="search-header">
-            <h2>統合解除</h2>
-            <p class="section-subtitle">統合された発注は新規発注Noのみ一覧に表示されています。解除すると元の発注Noを再表示します。</p>
+            <div class="header-main">
+                <h2>統合解除</h2>
+                <p class="section-subtitle">統合された発注は新規発注Noのみ一覧に表示されています。解除すると元の発注Noを再表示します。</p>
+            </div>
         </div>
 
         <div class="table-wrapper integration-table-wrapper">
@@ -112,6 +79,41 @@
             </div>
         </div>
 
+        <section class="search-subsection compact-card">
+            <div class="search-header">
+                <div>
+                    <h3>統合対象を絞り込む</h3>
+                    <p class="section-subtitle">統合候補を絞り込むための検索条件を入力してください。</p>
+                </div>
+                <div class="inline-actions">
+                    <button type="submit" form="integration-filter" class="secondary">条件を適用</button>
+                    <a class="secondary" href="@Url.Action("Integration")">条件をクリア</a>
+                </div>
+            </div>
+
+            <form id="integration-filter" method="get" class="integration-form compact-form horizontal-form">
+                <div class="form-grid compact-grid inline-grid">
+                    <div class="form-group">
+                        <label asp-for="Filter.Keyword">キーワード</label>
+                        <input asp-for="Filter.Keyword" type="text" placeholder="発注No・依頼No・担当者で検索" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Filter.PersonInCharge">担当者</label>
+                        <input asp-for="Filter.PersonInCharge" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Filter.UpdatedFrom">契約日（From）</label>
+                        <input asp-for="Filter.UpdatedFrom" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Filter.UpdatedTo">契約日（To）</label>
+                        <input asp-for="Filter.UpdatedTo" type="date" />
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Filter.SearchPerformed" value="true" />
+            </form>
+        </section>
+
     @if (!string.IsNullOrWhiteSpace(Model.Message))
     {
         <div class="status-banner success" role="status">@Model.Message</div>
@@ -130,7 +132,7 @@
         <input type="hidden" asp-for="Filter.UpdatedTo" />
         <input type="hidden" asp-for="Filter.SearchPerformed" />
 
-        <div class="override-grid">
+        <div class="override-grid inline-grid">
             <div class="form-group inline-label">
                 <label asp-for="Overrides.ManualRequestNo">統合後の依頼No</label>
                 <input asp-for="Overrides.ManualRequestNo" type="number" min="0" />
