@@ -121,9 +121,17 @@ public sealed class MockRepository
             .ToList();
     }
 
-    public IReadOnlyList<IntegrationGroup> GetIntegrationGroups(IntegrationFilter? filter = null)
+    public IReadOnlyList<IntegrationGroup> GetIntegrationGroups(string? relatedOrderNo = null, IntegrationFilter? filter = null)
     {
         var groups = _integrationGroups.Values.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(relatedOrderNo))
+        {
+            groups = groups.Where(group =>
+                group.IntegrationOrderNo.Equals(relatedOrderNo, StringComparison.OrdinalIgnoreCase)
+                || group.SourceRecords.Any(record =>
+                    record.Field01.Equals(relatedOrderNo, StringComparison.OrdinalIgnoreCase)));
+        }
 
         if (filter is not null && filter.HasCriteria)
         {
@@ -147,9 +155,9 @@ public sealed class MockRepository
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        if (distinctOrderNumbers.Count < 3)
+        if (distinctOrderNumbers.Count < 2)
         {
-            return IntegrationOperationResult.Failed("発注統合は3件以上を選択してください。");
+            return IntegrationOperationResult.Failed("発注統合は2件以上を選択してください。");
         }
 
         var candidates = GetIntegrationCandidates();

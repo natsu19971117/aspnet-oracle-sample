@@ -6,6 +6,7 @@ public sealed class IntegrationFilter
     public string? PersonInCharge { get; set; }
     public DateOnly? UpdatedFrom { get; set; }
     public DateOnly? UpdatedTo { get; set; }
+    public string? TargetOrderNo { get; set; }
     public bool SearchPerformed { get; set; }
 
     public bool HasCriteria => !string.IsNullOrWhiteSpace(Keyword)

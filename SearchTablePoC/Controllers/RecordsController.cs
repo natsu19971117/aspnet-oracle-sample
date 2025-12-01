@@ -212,12 +212,11 @@ public sealed class RecordsController : Controller
             AvailableRecords = showResults
                 ? _repository.GetIntegrationCandidates(filter)
                 : Array.Empty<Record>(),
-            IntegratedOrders = showResults
-                ? _repository.GetIntegrationGroups(filter)
-                : Array.Empty<IntegrationGroup>(),
+            IntegratedOrders = string.IsNullOrWhiteSpace(filter.TargetOrderNo)
+                ? Array.Empty<IntegrationGroup>()
+                : _repository.GetIntegrationGroups(filter.TargetOrderNo),
             Filter = filter,
-            Overrides = overrides,
-            ShowUndoResults = showResults
+            Overrides = overrides
         };
 
         if (TempData.TryGetValue("IntegrationMessage", out var message))
@@ -241,6 +240,7 @@ public sealed class RecordsController : Controller
             filter.PersonInCharge,
             filter.UpdatedFrom,
             filter.UpdatedTo,
+            filter.TargetOrderNo,
             filter.SearchPerformed,
             overrides.ManualRequestNo,
             overrides.ManualContractDate,

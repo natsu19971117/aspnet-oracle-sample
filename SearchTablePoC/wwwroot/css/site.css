@@ -199,6 +199,12 @@ body {
     gap: 0.75rem;
 }
 
+.inline-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 .eyebrow {
     color: #1d4ed8;
     font-weight: 700;
@@ -477,6 +483,138 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+/* Integration page layout */
+.compact-card {
+    padding-bottom: 0.75rem;
+}
+
+.compact-form .form-group label {
+    margin-bottom: 0.2rem;
+}
+
+.compact-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    row-gap: 0.6rem;
+}
+
+.integration-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 1rem;
+    align-items: stretch;
+    min-height: calc(100vh - 140px);
+}
+
+.integration-panel {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+}
+
+.header-main {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.integration-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+    min-height: 0;
+    overflow: visible;
+}
+
+.integration-panel > .integration-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.integration-table-wrapper {
+    flex: 1;
+    min-height: 0;
+}
+
+.override-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 0.75rem;
+}
+
+.inline-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.horizontal-form .form-group,
+.inline-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.horizontal-form .form-group label,
+.inline-label label {
+    margin: 0;
+    white-space: normal;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.horizontal-form .form-group input,
+.inline-label input {
+    flex: 1;
+    min-width: 0;
+}
+
+.integration-table-wrapper {
+    flex: 1;
+    min-height: 260px;
+    overflow: auto;
+    max-height: clamp(260px, 55vh, 520px);
+    margin-top: 0.25rem;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.integration-table th,
+.integration-table td {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.integration-table td ul {
+    padding-left: 1rem;
+    margin: 0;
+}
+
+.table-actions {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .override-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .integration-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
 }
 
 .summary-header {
