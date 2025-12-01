@@ -212,12 +212,9 @@ public sealed class RecordsController : Controller
             AvailableRecords = showResults
                 ? _repository.GetIntegrationCandidates(filter)
                 : Array.Empty<Record>(),
-            IntegratedOrders = showResults
-                ? _repository.GetIntegrationGroups(filter)
-                : Array.Empty<IntegrationGroup>(),
+            IntegratedOrders = _repository.GetIntegrationGroups(),
             Filter = filter,
-            Overrides = overrides,
-            ShowUndoResults = showResults
+            Overrides = overrides
         };
 
         if (TempData.TryGetValue("IntegrationMessage", out var message))

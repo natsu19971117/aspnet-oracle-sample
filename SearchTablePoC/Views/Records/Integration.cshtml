@@ -5,13 +5,13 @@
 }
 
 <section class="search-section compact-card">
-    <div class="search-header">
-        <div>
-            <h2>統合対象を絞り込む</h2>
-            <p class="section-subtitle">関連のある発注のみ表示するための検索条件を入力してください。統合済みの解除対象も同じ条件で絞り込まれます。</p>
-        </div>
-        <div class="inline-actions">
-            <button type="submit" form="integration-filter" class="secondary">条件を適用</button>
+        <div class="search-header">
+            <div>
+                <h2>統合対象を絞り込む</h2>
+                <p class="section-subtitle">統合候補を絞り込むための検索条件を入力してください。</p>
+            </div>
+            <div class="inline-actions">
+                <button type="submit" form="integration-filter" class="secondary">条件を適用</button>
             <a class="secondary" href="@Url.Action("Integration")">条件をクリア</a>
         </div>
     </div>
@@ -58,16 +58,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!Model.ShowUndoResults)
+                    @if (!Model.IntegratedOrders.Any())
                     {
                         <tr class="empty">
-                            <td colspan="5">検索条件を入力し、「条件を適用」を押すと統合解除対象が表示されます。</td>
-                        </tr>
-                    }
-                    else if (!Model.IntegratedOrders.Any())
-                    {
-                        <tr class="empty">
-                            <td colspan="5">絞り込み条件に関連する統合済みの発注はありません。</td>
+                            <td colspan="5">現在、統合解除できる発注はありません。</td>
                         </tr>
                     }
                     else
@@ -140,17 +134,14 @@
             <div class="form-group inline-label">
                 <label asp-for="Overrides.ManualRequestNo">統合後の依頼No</label>
                 <input asp-for="Overrides.ManualRequestNo" type="number" min="0" />
-                <p class="helper-text">未入力の場合は元の依頼Noを合算します。</p>
             </div>
             <div class="form-group inline-label">
                 <label asp-for="Overrides.ManualContractDate">統合後の契約日</label>
                 <input asp-for="Overrides.ManualContractDate" type="date" />
-                <p class="helper-text">指定すると最小発注Noではなく入力した日付が採用されます。</p>
             </div>
             <div class="form-group inline-label">
                 <label asp-for="Overrides.ManualPersonInCharge">統合後の担当者</label>
                 <input asp-for="Overrides.ManualPersonInCharge" type="text" />
-                <p class="helper-text">空欄のままの場合は最小発注Noの担当者名が使用されます。</p>
             </div>
         </div>
 
@@ -198,7 +189,6 @@
                 </tbody>
             </table>
         </div>
-        <p class="helper-text">※ 発注統合有無列をクリックするとこの画面に戻ります。統合には2件以上の発注Noを選択してください。</p>
     </form>
     </section>
 </div>
