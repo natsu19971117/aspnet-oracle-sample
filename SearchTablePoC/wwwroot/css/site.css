@@ -504,7 +504,8 @@ body {
     grid-template-columns: 1fr 1.6fr;
     gap: 1rem;
     align-items: stretch;
-    min-height: calc(100vh - 180px);
+    height: calc(100vh - 140px);
+    overflow: hidden;
 }
 
 .integration-panel {
@@ -512,6 +513,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .header-main {
@@ -526,16 +529,20 @@ body {
     flex-direction: column;
     gap: 0.75rem;
     flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .integration-panel > .integration-form {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 0;
 }
 
 .integration-table-wrapper {
     flex: 1;
+    min-height: 0;
 }
 
 .override-grid {
@@ -573,7 +580,6 @@ body {
 
 .integration-table-wrapper {
     flex: 1;
-    max-height: calc(100vh - 320px);
     min-height: 260px;
     overflow: auto;
     margin-top: 0.25rem;
@@ -606,6 +612,8 @@ body {
 @media (max-width: 1100px) {
     .integration-layout {
         grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
     }
 }
 
