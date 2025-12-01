@@ -56,6 +56,7 @@
                                             <input type="hidden" asp-for="Filter.PersonInCharge" />
                                             <input type="hidden" asp-for="Filter.UpdatedFrom" />
                                             <input type="hidden" asp-for="Filter.UpdatedTo" />
+                                            <input type="hidden" asp-for="Filter.TargetOrderNo" />
                                             <input type="hidden" asp-for="Filter.SearchPerformed" />
                                             <button type="submit" class="secondary">統合解除</button>
                                         </form>
@@ -85,6 +86,7 @@
                 </div>
 
                 <form id="integration-filter" method="get" class="integration-form compact-form horizontal-form">
+                    <input type="hidden" asp-for="Filter.TargetOrderNo" />
                     <div class="form-grid compact-grid inline-grid">
                         <div class="form-group">
                             <label asp-for="Filter.Keyword">キーワード</label>
@@ -113,6 +115,7 @@
                 <input type="hidden" asp-for="Filter.PersonInCharge" />
                 <input type="hidden" asp-for="Filter.UpdatedFrom" />
                 <input type="hidden" asp-for="Filter.UpdatedTo" />
+                <input type="hidden" asp-for="Filter.TargetOrderNo" />
                 <input type="hidden" asp-for="Filter.SearchPerformed" />
 
                 <section class="search-subsection compact-card value-override">

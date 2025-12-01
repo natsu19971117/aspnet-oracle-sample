@@ -189,7 +189,7 @@
                                 else if (column.PropertyName == nameof(Record.IntegrationStatus))
                                 {
                                     <td data-column="@column.PropertyName">
-                                        <a href="@Url.Action("Integration")" class="integration-link">@RecordMetadata.FormatValue(record, column)</a>
+                                        <a href="@Url.Action("Integration", new { TargetOrderNo = record.Field01 })" class="integration-link">@RecordMetadata.FormatValue(record, column)</a>
                                     </td>
                                 }
                                 else

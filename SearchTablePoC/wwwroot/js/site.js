@@ -213,7 +213,10 @@
                 } else if (column.PropertyName === 'IntegrationStatus') {
                     const status = dataRow[column.PropertyName] ?? '';
                     const link = document.createElement('a');
-                    link.href = '/Records/Integration';
+                    const orderNo = dataRow['Field01'] ?? '';
+                    link.href = orderNo
+                        ? `/Records/Integration?TargetOrderNo=${encodeURIComponent(orderNo)}`
+                        : '/Records/Integration';
                     link.className = 'integration-link';
                     link.textContent = status;
                     cell.appendChild(link);

@@ -212,7 +212,9 @@ public sealed class RecordsController : Controller
             AvailableRecords = showResults
                 ? _repository.GetIntegrationCandidates(filter)
                 : Array.Empty<Record>(),
-            IntegratedOrders = _repository.GetIntegrationGroups(),
+            IntegratedOrders = string.IsNullOrWhiteSpace(filter.TargetOrderNo)
+                ? Array.Empty<IntegrationGroup>()
+                : _repository.GetIntegrationGroups(filter.TargetOrderNo),
             Filter = filter,
             Overrides = overrides
         };
@@ -238,6 +240,7 @@ public sealed class RecordsController : Controller
             filter.PersonInCharge,
             filter.UpdatedFrom,
             filter.UpdatedTo,
+            filter.TargetOrderNo,
             filter.SearchPerformed,
             overrides.ManualRequestNo,
             overrides.ManualContractDate,
