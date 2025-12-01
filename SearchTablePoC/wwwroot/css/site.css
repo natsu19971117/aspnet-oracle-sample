@@ -581,6 +581,7 @@ body {
     flex: 1;
     min-height: 260px;
     overflow: auto;
+    max-height: clamp(260px, 55vh, 520px);
     margin-top: 0.25rem;
     background: #fff;
     border-radius: 8px;
