@@ -157,6 +157,12 @@ public sealed class RecordsController : Controller
         filter ??= new IntegrationFilter();
         overrides ??= new IntegrationOverrides();
 
+        if (!string.IsNullOrWhiteSpace(filter.TargetOrderNo))
+        {
+            orderNumbers ??= new List<string>();
+            orderNumbers.Add(filter.TargetOrderNo);
+        }
+
         var result = _repository.IntegrateOrders(orderNumbers ?? new List<string>(), overrides);
         if (!result.Success)
         {
